@@ -2,13 +2,14 @@ import os
 import json
 from json_templates import get_json_template
 from js_templates import get_js_template
+from php_templates import get_php_template
 
 
 def usage():
     print("Available commands:")
     print("  button           Creates a new button")
-    print("  <command2>       Description of command2")
-    print("  <command3>       Description of command3")
+    print("  hook             Creates a new hook")
+    print("  entity           Creates a new entity")
     print("  help             Display this help message")
     print("  exit             Exit the script")
 
@@ -89,17 +90,17 @@ def create_button():
     print("4. Warning")
     style_number = input("Enter the style number: ")
 
-    if style_number == "1":
-        style = "default"
-    elif style_number == "2":
-        style = "success"
-    elif style_number == "3":
-        style = "danger"
-    elif style_number == "4":
-        style = "warning"
-    else:
+    styles = {
+        "1": "default",
+        "2": "success",
+        "3": "danger",
+        "4": "warning",
+    }
+    if style_number not in styles:
         print("Invalid style number")
         return
+
+    style = styles[style_number]
 
     # Generate the JSON file
     json_dir = os.path.join(root_dir, "../src/backend/Resources/metadata/clientDefs")
@@ -136,14 +137,120 @@ def create_button():
     print(f"JS file created: {js_file}")
 
 
-def command2():
-    # Implement the logic for command2
-    print("Executing command2")
+def create_hook():
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    package_json_path = os.path.join(root_dir, "../package.json")
+
+    module_suggestion = ""
+    if os.path.isfile(package_json_path):
+        with open(package_json_path, "r") as file:
+            package_data = json.load(file)
+            module_suggestion = package_data.get("name", "")
+
+    module = input(f"Enter the module name (default: {module_suggestion}): ") or module_suggestion
+    entity = input("Enter the entity name: ")
+
+    print("Select the hook type:")
+    print("1. beforeSave")
+    print("2. afterSave")
+    print("3. beforeRemove")
+    print("4. afterRemove")
+    print("5. afterRelate")
+    print("6. afterUnrelate")
+    print("7. afterMassRelate")
+    hook_type_number = input("Enter the hook type number: ")
+
+    hook_types = {
+        "1": "beforeSave",
+        "2": "afterSave",
+        "3": "beforeRemove",
+        "4": "afterRemove",
+        "5": "afterRelate",
+        "6": "afterUnrelate",
+        "7": "afterMassRelate"
+    }
+
+    if hook_type_number not in hook_types:
+        print("Invalid hook type number")
+        return
+
+    hook_type = hook_types[hook_type_number]
+
+    name = input("Enter the hook name: ")
+
+    # Generate the PHP file
+    php_dir = os.path.join(root_dir, f"../src/backend/Hooks/{entity}")
+    php_file = os.path.join(php_dir, f"{name}.php")
+    create_directory(php_dir)
+
+    if os.path.isfile(php_file):
+        print(f"Error: PHP file already exists: {php_file}")
+        return
+
+    php_content = get_php_template(module, hook_type, name, entity)
+
+    with open(php_file, "w") as file:
+        file.write(php_content.strip())
+    print(f"PHP file created: {php_file}")
 
 
-def command3():
-    # Implement the logic for command3
-    print("Executing command3")
+def create_entity():
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    package_json_path = os.path.join(root_dir, "../package.json")
+
+    module_suggestion = ""
+    if os.path.isfile(package_json_path):
+        with open(package_json_path, "r") as file:
+            package_data = json.load(file)
+            module_suggestion = package_data.get("name", "")
+
+    module = input(f"Enter the module name (default: {module_suggestion}): ") or module_suggestion
+
+    print("Select the entity type:")
+    print("1. Base")
+    print("2. Base Plus")
+    print("3. Event")
+    print("4. Person")
+    print("5. Company")
+    entity_type_number = input("Enter the entity type number: ")
+
+    entity_types = {
+        "1": "Base",
+        "2": "BasePlus",
+        "3": "Event",
+        "4": "Person",
+        "5": "Company"
+    }
+
+    if entity_type_number not in entity_types:
+        print("Invalid entity type number")
+        return
+
+    entity_type = entity_types[entity_type_number]
+
+    entity_name = input("Enter the entity name: ")
+
+    # Generate the entityDefs JSON file
+    entity_defs_dir = os.path.join(root_dir, "../src/backend/Resources/metadata/entityDefs")
+    entity_defs_file = os.path.join(entity_defs_dir, f"{entity_name}.json")
+    create_directory(entity_defs_dir)
+
+    entity_defs_json = get_json_template("entityDefs", entity_name)
+
+    with open(entity_defs_file, "w") as file:
+        json.dump(entity_defs_json, file, indent=2)
+    print(f"entityDefs JSON file created: {entity_defs_file}")
+
+    # Generate the scopes JSON file
+    scopes_dir = os.path.join(root_dir, "../src/backend/Resources/metadata/scopes")
+    scopes_file = os.path.join(scopes_dir, f"{entity_name}.json")
+    create_directory(scopes_dir)
+
+    scopes_json = get_json_template("scopes", entity_name, entity_type, module)
+
+    with open(scopes_file, "w") as file:
+        json.dump(scopes_json, file, indent=2)
+    print(f"scopes JSON file created: {scopes_file}")
 
 
 # Main script loop
@@ -154,10 +261,10 @@ while True:
 
     if command == "button":
         create_button()
-    elif command == "command2":
-        command2()
-    elif command == "command3":
-        command3()
+    elif command == "hook":
+        create_hook()
+    elif command == "entity":
+        create_entity()
     elif command == "help":
         usage()
     elif command == "exit":

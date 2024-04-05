@@ -1,5 +1,6 @@
 def get_json_template(command, view, button_type, label, name, module, entity, style):
     if command == "button":
+
         if view == "detail" and button_type == "dropdown":
             return {
                 "detailActionList": [
@@ -15,6 +16,7 @@ def get_json_template(command, view, button_type, label, name, module, entity, s
                     }
                 ]
             }
+        
         elif view == "list" and button_type == "mass-action":
             return {
                 "massActionList": [
@@ -54,6 +56,6 @@ def get_json_template(command, view, button_type, label, name, module, entity, s
                     }
                 }
             }
-    else:
-        # Add templates for other commands here
+
+    elif command == "entity":
         return {}
