@@ -42,7 +42,7 @@ define('{module}:{name}-handler', ['action-handler'], function (Dep) {{
 
       this.view.listenTo(
         this.view.model,
-        'change:status',
+        'change:status',en
         this.controlButtonVisibility.bind(this)
       );
     }},

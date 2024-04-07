@@ -107,7 +107,7 @@ def create_button():
     json_file = os.path.join(json_dir, f"{entity}.json")
     create_directory(json_dir)
 
-    new_json = get_json_template("button", view, button_type, label, name, module, entity, style)
+    new_json = get_json_template(command="button", view=view, button_type=button_type, label=label, name=name, module=module, entity=entity, style=style)
 
     if os.path.isfile(json_file):
         with open(json_file, "r") as file:
@@ -116,8 +116,8 @@ def create_button():
     else:
         merged_json = new_json
 
-    with open(json_file, "w") as file:
-        json.dump(merged_json, file, indent=2)
+    with open(json_file, "w", encoding='utf-8') as file:
+        json.dump(merged_json, file, indent=2, ensure_ascii=False)
     print(f"JSON file created/updated: {json_file}")
 
     # Generate the JS file
@@ -222,11 +222,10 @@ def create_entity():
         "5": "Company"
     }
 
-    if entity_type_number not in entity_types:
+    entity_type = entity_types.get(entity_type_number)
+    if not entity_type:
         print("Invalid entity type number")
         return
-
-    entity_type = entity_types[entity_type_number]
 
     entity_name = input("Enter the entity name: ")
 
@@ -234,22 +233,18 @@ def create_entity():
     entity_defs_dir = os.path.join(root_dir, "../src/backend/Resources/metadata/entityDefs")
     entity_defs_file = os.path.join(entity_defs_dir, f"{entity_name}.json")
     create_directory(entity_defs_dir)
-
-    entity_defs_json = get_json_template("entityDefs", entity_name)
-
-    with open(entity_defs_file, "w") as file:
-        json.dump(entity_defs_json, file, indent=2)
+    entity_defs_json = get_json_template(command="entity", entity_name=entity_name, entity_type=entity_type)
+    with open(entity_defs_file, "w", encoding='utf-8') as file:
+        json.dump(entity_defs_json, file, indent=2, ensure_ascii=False)
     print(f"entityDefs JSON file created: {entity_defs_file}")
 
     # Generate the scopes JSON file
     scopes_dir = os.path.join(root_dir, "../src/backend/Resources/metadata/scopes")
     scopes_file = os.path.join(scopes_dir, f"{entity_name}.json")
     create_directory(scopes_dir)
-
-    scopes_json = get_json_template("scopes", entity_name, entity_type, module)
-
-    with open(scopes_file, "w") as file:
-        json.dump(scopes_json, file, indent=2)
+    scopes_json = get_json_template(command="scope", entity_name=entity_name, entity_type=entity_type, module=module)
+    with open(scopes_file, "w", encoding='utf-8') as file:
+        json.dump(scopes_json, file, indent=2, ensure_ascii=False)
     print(f"scopes JSON file created: {scopes_file}")
 
 
