@@ -17,9 +17,9 @@ def get_json_template(command, **kwargs):
                         "name": name,
                         "acl": "edit",
                         "data": {
-                            "handler": f"{module}:{name}-handler"
+                            "handler": f"{module}:handlers/{entity}/{name}-handler"
                         },
-                        "initFunction": f"init{name.capitalize()}"
+                        "initFunction": f"init{name.capitalize().replace('-', '')}"
                     }
                 ]
             }
@@ -35,8 +35,8 @@ def get_json_template(command, **kwargs):
                 ],
                 "massActionDefs": {
                     name: {
-                        "handler": f"{module}:{name}-handler",
-                        "initFunction": f"init{name.capitalize()}"
+                        "handler": f"{module}:handlers/{entity}/{name}-handler",
+                        "initFunction": f"init{name.capitalize().replace('-', '')}"
                     }
                 }
             }
@@ -49,14 +49,14 @@ def get_json_template(command, **kwargs):
                             {
                                 "label": label,
                                 "name": name,
-                                "action": name,
+                                "action": f"{name.replace('-', '')}",
                                 "style": style,
                                 "acl": "edit",
                                 "aclScope": entity.capitalize(),
                                 "data": {
-                                    "handler": f"{module}:{name}-handler"
+                                    "handler": f"{module}:handlers/{entity}/{name}-handler"
                                 },
-                                "initFunction": f"init{name.capitalize()}"
+                                "initFunction": f"init{name.capitalize().replace('-', '')}"
                             }
                         ]
                     }

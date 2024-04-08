@@ -18,18 +18,30 @@ def get_php_template(module, hook_type, name, entity):
         save_options = "use Espo\\ORM\\Repository\\Option\\MassRelateOptions;\nuse Espo\\ORM\\Query\\Select;"
         method_signature = "(Entity $entity, string $relationName, Select $query, array $columnData, MassRelateOptions $options): void"
 
+    # Convert the module name to the appropriate format for the namespace
+    module_parts = module.split('-')
+    module_namespace = ''.join(part.capitalize() for part in module_parts)
+
     return f"""<?php
-namespace Espo\\Modules\\{module}\\Hooks\\{entity};
+namespace Espo\\Modules\\{module_namespace}\\Hooks\\{entity};
 
 use Espo\\ORM\\Entity;
 use Espo\\Core\\Hook\\Hook\\{hook_type[0].upper() + hook_type[1:]};
 {save_options}
+use Espo\\Core\\Utils\\Log;
 
 class {name} implements {hook_type}
 {{
+    const DEBUG_PREFIX = '[{module_namespace}\\Hooks\\{entity}\\{name}]';
+
     public function __construct(
-        // Define needed dependencies.
+        private Log $log
     ) {{}}
+    
+    private function debug($message, array $context = []): void
+    {{
+        $this->log->debug(self::DEBUG_PREFIX . ' ' . $message, $context);
+    }}
 
     public function {hook_type}{method_signature}
     {{
