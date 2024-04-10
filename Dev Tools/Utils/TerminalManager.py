@@ -1,11 +1,12 @@
+import array
 import os
 import json
 import re
-from validators import (
+from ..validators import (
     validate_input
 )
 
-class TerminalCommunicator:
+class TerminalManager:
     def __init__(self):
         self.root_dir = os.path.dirname(os.path.abspath(__file__))
         self.package_json_path = os.path.join(self.root_dir, "../package.json")
@@ -20,6 +21,11 @@ class TerminalCommunicator:
     @staticmethod
     def get_user_input(prompt, validator=None, error_message=None, default=None):
         return validate_input(prompt, validator, error_message, default)
+
+    def sent_choice_to_user(self, introMsg, choices: array):
+        print(introMsg)
+        for choiceKey, choiceValue in choices:
+            print(choiceKey + '. ' + choiceValue + os.linesep)
 
     def get_choice(self, prompt, choices):
         choice = None

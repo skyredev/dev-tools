@@ -6,24 +6,6 @@ COMMAND_DESCRIPTIONS = {
     "exit": "Exit the script"
 }
 
-BUTTON_VIEW_TYPES = {
-    "1": "detail",
-    "2": "list",
-    "3": "edit"
-}
-
-BUTTON_DETAIL_TYPES = {
-    "1": "dropdown",
-    "2": "top-right"
-}
-
-BUTTON_STYLES = {
-    "1": "default",
-    "2": "success",
-    "3": "danger",
-    "4": "warning"
-}
-
 HOOK_TYPES = {
     "1": "beforeSave",
     "2": "afterSave",

@@ -1,10 +1,11 @@
 from constants import (
     COMMAND_DESCRIPTIONS
 )
+
+from ButtonCommand.ButtonCommand import ButtonCommand
 from communicator import TerminalCommunicator
 from filegenerators import FileGenerator
 from commandhandler import CommandHandler
-
 
 def usage():
     print("Available commands:")
@@ -24,7 +25,7 @@ def main():
 
         if command in COMMAND_DESCRIPTIONS:
             if command == "button":
-                command_handler.create_button()
+                ButtonCommand().run()
             elif command == "hook":
                 command_handler.create_hook()
             elif command == "entity":
