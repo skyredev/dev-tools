@@ -1,11 +1,15 @@
-from constants import (
-    COMMAND_DESCRIPTIONS
-)
+from DevTools.Button.ButtonCommand import ButtonCommand
+from DevTools.Hook.HookCommand import HookCommand
+from DevTools.Entity.EntityCommand import EntityCommand
 
-from ButtonCommand.ButtonCommand import ButtonCommand
-from communicator import TerminalCommunicator
-from filegenerators import FileGenerator
-from commandhandler import CommandHandler
+COMMAND_DESCRIPTIONS = {
+    "button": "Creates a new button",
+    "hook": "Creates a new hook",
+    "entity": "Creates a new entity",
+    "help": "Display this help message",
+    "exit": "Exit the script"
+}
+
 
 def usage():
     print("Available commands:")
@@ -14,9 +18,9 @@ def usage():
 
 
 def main():
-    communicator = TerminalCommunicator()
-    file_generator = FileGenerator(communicator)
-    command_handler = CommandHandler(communicator, file_generator)
+    button_Command = ButtonCommand()
+    hook_Command = HookCommand()
+    entity_Command = EntityCommand()
 
     while True:
         print("")
@@ -25,18 +29,22 @@ def main():
 
         if command in COMMAND_DESCRIPTIONS:
             if command == "button":
-                ButtonCommand().run()
+                button_Command.run()
             elif command == "hook":
-                command_handler.create_hook()
-            elif command == "entity":
-                command_handler.create_entity()
+                hook_Command.run()
             elif command == "help":
                 usage()
+            elif command == "entity":
+                entity_Command.run()
             elif command == "exit":
                 print("Exiting the script.")
                 break
         else:
             print(f"Unknown command: {command}")
+
+
+
+
 
 
 if __name__ == "__main__":

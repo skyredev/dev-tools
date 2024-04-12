@@ -1,31 +1,22 @@
-import array
-import os
-import json
 import re
-from ..validators import (
+from DevTools.Utils.Validators import (
     validate_input
 )
 
-class TerminalManager:
-    def __init__(self):
-        self.root_dir = os.path.dirname(os.path.abspath(__file__))
-        self.package_json_path = os.path.join(self.root_dir, "../package.json")
 
-    def get_module_suggestion(self):
-        if os.path.isfile(self.package_json_path):
-            with open(self.package_json_path, "r") as file:
-                package_data = json.load(file)
-                return package_data.get("name", "")
-        return ""
+class TerminalManager:
 
     @staticmethod
     def get_user_input(prompt, validator=None, error_message=None, default=None):
         return validate_input(prompt, validator, error_message, default)
 
-    def sent_choice_to_user(self, introMsg, choices: array):
-        print(introMsg)
-        for choiceKey, choiceValue in choices:
-            print(choiceKey + '. ' + choiceValue + os.linesep)
+    @staticmethod
+    def sent_choice_to_user(introMsg, choices: dict):
+        output = introMsg + '\n'
+        for choiceKey, choiceValue in choices.items():
+            output += f"{choiceKey}. {choiceValue}\n"
+        output += 'Please enter your choice'
+        return output
 
     def get_choice(self, prompt, choices):
         choice = None

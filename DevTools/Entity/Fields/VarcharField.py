@@ -1,4 +1,5 @@
-from BaseField import BaseField;
+from BaseField import BaseField
+
 
 class Varchar(BaseField):
 

@@ -1,13 +1,12 @@
 import os
 import json
-from json_templates import get_json_template
-from js_templates import get_js_template
-from php_templates import get_php_template
 
 
-class FileGenerator:
-    def __init__(self, communicator):
-        self.communicator = communicator
+class FileManager:
+
+    def __init__(self, TerminalManager, TemplateManager):
+        self.TerminalManager = TerminalManager
+        self.TemplateManager = TemplateManager()
 
     @staticmethod
     def create_directory(directory):
@@ -40,9 +39,9 @@ class FileGenerator:
             return new_json
 
     def create_button_files(self, module, entity, view, button_type, label, name, style):
-        entity = entity.lower()
+        entity = entity.upper()
 
-        json_dir = os.path.join(self.communicator.root_dir, "../src/backend/Resources/metadata/clientDefs")
+        json_dir = os.path.join(self.TerminalManager.root_dir, "../../src/backend/Resources/metadata/clientDefs")
         json_file = os.path.join(json_dir, f"{entity}.json")
         self.create_directory(json_dir)
 
@@ -53,7 +52,7 @@ class FileGenerator:
             json.dump(merged_json, file, indent=2, ensure_ascii=False)
         print(f"JSON file created/updated: {json_file}")
 
-        js_dir = os.path.join(self.communicator.root_dir, f"../src/client/src/handlers/{entity}")
+        js_dir = os.path.join(self.TerminalManager.root_dir, f"../src/client/src/handlers/{entity}")
         js_file = os.path.join(js_dir, f"{name}-handler.js")
 
         if os.path.isfile(js_file):
@@ -67,7 +66,7 @@ class FileGenerator:
         print(f"JS file created: {js_file}")
 
     def create_hook_file(self, module, hook_type, name, entity):
-        php_dir = os.path.join(self.communicator.root_dir, f"../src/backend/Hooks/{entity}")
+        php_dir = os.path.join(self.TerminalManager.root_dir, f"../src/backend/Hooks/{entity}")
         php_file = os.path.join(php_dir, f"{name}.php")
         self.create_directory(php_dir)
 
@@ -81,7 +80,7 @@ class FileGenerator:
         print(f"PHP file created: {php_file}")
 
     def create_entity_files(self, module, entity_name, entity_type):
-        entity_defs_dir = os.path.join(self.communicator.root_dir, "../src/backend/Resources/metadata/entityDefs")
+        entity_defs_dir = os.path.join(self.TerminalManager.root_dir, "../src/backend/Resources/metadata/entityDefs")
         entity_defs_file = os.path.join(entity_defs_dir, f"{entity_name}.json")
         self.create_directory(entity_defs_dir)
         entity_defs_json = get_json_template(command="entity", entity_name=entity_name, entity_type=entity_type)
@@ -89,7 +88,7 @@ class FileGenerator:
             json.dump(entity_defs_json, file, indent=2, ensure_ascii=False)
         print(f"entityDefs JSON file created: {entity_defs_file}")
 
-        scopes_dir = os.path.join(self.communicator.root_dir, "../src/backend/Resources/metadata/scopes")
+        scopes_dir = os.path.join(self.TerminalManager.root_dir, "../src/backend/Resources/metadata/scopes")
         scopes_file = os.path.join(scopes_dir, f"{entity_name}.json")
         self.create_directory(scopes_dir)
         scopes_json = get_json_template(command="scope", entity_name=entity_name, entity_type=entity_type,

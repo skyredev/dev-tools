@@ -2,5 +2,5 @@ class BaseField:
     name: ""
     type: ""
 
-    def generateJson(self):
+    def generate_json(self):
         return ''
