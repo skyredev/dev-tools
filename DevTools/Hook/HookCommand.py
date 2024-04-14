@@ -31,20 +31,21 @@ class HookCommand(BaseCommand):
         hook_name = self.TerminalManager.get_user_input("Enter the hook name", hook_name_validator,
                                                         hook_name_validator_error())
 
-        #self.FileManager.create_hook_file(module, hook_type, hook_name, entity)
-        populatedTemplate = self.TemplateManager.set_template_values(
-            self.FileManager.read_file(os.path.join(self.script_dir, "Templates/" + hook_type)), self.generateTemplateValues(
+        populated_template = self.TemplateManager.set_template_values(
+            self.FileManager.read_file(os.path.join(self.script_dir, "Templates/BaseHooks/" + hook_type + ".php")),
+            self.generate_template_values(
                 module, entity, hook_type, hook_name)
         )
 
         php_dir = os.path.join(self.script_dir, f"../../src/backend/Hooks/{entity}/{hook_name}.php")
 
-        self.FileManager.write_file(php_dir, populatedTemplate)
+        self.FileManager.write_file(php_dir, populated_template)
 
-    def generateTemplateValues(self, module, entity, hook_type, hook_name):
+    @staticmethod
+    def generate_template_values(module, entity, hook_type, hook_name):
         return {
-                "{ModuleNamePlaceholder}": module,
-                "{EntityNamePlaceholder}": entity,
-                "{HookNamePlaceHolder}": hook_name,
-                "{HookTypePlaceHolder}": hook_type
-            }
+            "{ModuleNamePlaceholder}": ''.join(part.capitalize() for part in module.split('-')),
+            "{EntityNamePlaceholder}": entity,
+            "{HookNamePlaceHolder}": hook_name,
+            "{HookTypePlaceHolder}": hook_type
+        }

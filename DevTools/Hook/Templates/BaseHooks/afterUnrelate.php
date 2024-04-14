@@ -6,11 +6,12 @@ use Espo\ORM\EntityManager;
 use Espo\ORM\Entity;
 use Espo\ORM\Repository\Option\UnrelateOptions;
 
-class {HookNamePlaceHolder} implements AfterUnrelate
+class {HookNamePlaceHolder} implements afterUnrelate
 {
     const DEBUG_PREFIX = '[{ModuleNamePlaceholder}\Hooks\{EntityNamePlaceholder}\{HookNamePlaceHolder}]';
 
     public function __construct(
+        private Log $log
     ) {}
 
     private function debug($message, array $context = []): void

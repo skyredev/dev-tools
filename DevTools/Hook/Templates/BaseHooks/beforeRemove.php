@@ -1,18 +1,17 @@
 <?php
 namespace Espo\Modules\{ModuleNamePlaceholder}\Hooks\{EntityNamePlaceholder};
 
-use Espo\Core\Hook\Hook\BeforeSave;
+use Espo\Core\Hook\Hook\BeforeRemove;
 use Espo\ORM\EntityManager;
 use Espo\ORM\Entity;
-use Espo\ORM\Repository\Option\SaveOptions;
+use Espo\ORM\Repository\Option\RemoveOptions;
 
-use Espo\Modules\CustomAccounting\Tools\Vies;
-
-class {HookNamePlaceHolder} implements {HookTypePlaceHolder}
+class {HookNamePlaceHolder} implements beforeRemove
 {
     const DEBUG_PREFIX = '[{ModuleNamePlaceholder}\Hooks\{EntityNamePlaceholder}\{HookNamePlaceHolder}]';
 
     public function __construct(
+        private Log $log
     ) {}
 
     private function debug($message, array $context = []): void
@@ -20,7 +19,7 @@ class {HookNamePlaceHolder} implements {HookTypePlaceHolder}
         $this->log->debug(self::DEBUG_PREFIX . ' ' . $message, $context);
     }
 
-    public function {FunctionNamePlaceHolder} (Entity $entity, SaveOptions $options): void
+    public function beforeRemove (Entity $entity, RemoveOptions $options): void
     {
 
     }

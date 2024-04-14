@@ -17,7 +17,6 @@ class BaseCommand:
         self.TemplateManager = TemplateManager()
         self.FileManager = FileManager(self.TerminalManager, self.TemplateManager)
 
-
     def get_module(self):
         module = self.TerminalManager.get_user_input(
             "Enter the module name", empty_string_validator, empty_string_validator_error(),
