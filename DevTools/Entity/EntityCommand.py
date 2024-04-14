@@ -1,4 +1,9 @@
+import json
+
 from DevTools.Base.BaseCommand import BaseCommand
+from DevTools.Entity.Fields.BaseField import BaseField
+from DevTools.Entity.Fields.TextField import TextField
+from DevTools.Entity.Fields.VarcharField import VarcharField
 
 
 class EntityCommand(BaseCommand):
@@ -18,3 +23,18 @@ class EntityCommand(BaseCommand):
         entity_name = self.get_entity_name()
 
         self.FileManager.create_entity_files(module, entity_name, entity_type)
+
+    def createNewEntityBase(self):
+
+        fieldName = VarcharField("name")
+        fieldName.set_value('required', 'true')
+        fieldName.set_value('pattern', '$noBadCharacters')
+
+        fieldDescription = TextField("description")
+
+        return json.dumps({
+            "fields": {
+                fieldName.name: fieldName.data,
+                fieldDescription.name: fieldDescription.data
+            }
+        }, indent=4)

@@ -6,7 +6,7 @@ class FileManager:
 
     def __init__(self, TerminalManager, TemplateManager):
         self.TerminalManager = TerminalManager
-        self.TemplateManager = TemplateManager()
+        self.TemplateManager = TemplateManager
 
     @staticmethod
     def create_directory(directory):
@@ -96,3 +96,16 @@ class FileManager:
         with open(scopes_file, "w", encoding='utf-8') as file:
             json.dump(scopes_json, file, indent=2, ensure_ascii=False)
         print(f"scopes JSON file created: {scopes_file}")
+
+    def read_file(self, source_path):
+        # Load file from path_to_template
+        with open(source_path, 'r') as file:
+            content = file.read()
+
+        return content
+
+    def write_file(self, destination_path, content):
+        with open(destination_path, 'w') as file:
+            file.write(content)
+
+

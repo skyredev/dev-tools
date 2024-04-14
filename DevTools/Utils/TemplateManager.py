@@ -1,3 +1,6 @@
+import array
+import string
+
 from DevTools.Button.ButtonTemplates import ButtonTemplates
 from DevTools.Hook.HookTemplates import HookTemplates
 from DevTools.Entity.EntityTemplates import EntityTemplates
@@ -30,3 +33,10 @@ class TemplateManager:
     @staticmethod
     def entity_template(**kwargs):
         return ""
+
+    def set_template_values(self, content: str, values: dict):
+        # Replace content in loaded file content by values where is (placeholder => realValue)
+        for placeholder, value in values.items():
+            content = content.replace(placeholder, value)
+
+        return content

@@ -1,7 +1,16 @@
-from BaseField import BaseField
+from DevTools.Entity.Fields.BaseField import BaseField
+from DevTools.Utils.Validators import ValidationOptions
 
 
-class Varchar(BaseField):
+class VarcharField(BaseField):
 
-    def generateJson(self):
-        return ''
+    data = {
+        "type": "varchar"
+    }
+
+    availableOptions = {
+        "required": ValidationOptions.TrueFalse,
+        "maxLength": ValidationOptions.Integer,
+        "copyToClipboard": ValidationOptions.TrueFalse,
+        "options": ValidationOptions.Array,
+    }
