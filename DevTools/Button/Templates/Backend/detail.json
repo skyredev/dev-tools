@@ -1,0 +1,21 @@
+{
+  "menu": {
+    "{ViewPlaceholder}": {
+      "buttons": [
+        "__APPEND__",
+        {
+          "label": "{ButtonLabelPlaceholder}",
+          "name": "{ButtonNamePlaceholder}",
+          "action": "{ButtonNameNoDashPlaceholder}",
+          "style": "{ButtonStylePlaceholder}",
+          "acl": "edit",
+          "aclScope": "{EntityNameUpperPlaceholder}",
+          "data": {
+            "handler": "{ModuleNamePlaceholder}:handlers/{EntityNamePlaceholder}/{ButtonNamePlaceholder}-handler"
+          },
+          "initFunction": "init{ButtonNameUpperPlaceholder}"
+        }
+      ]
+    }
+  }
+}

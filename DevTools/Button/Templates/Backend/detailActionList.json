@@ -1,0 +1,14 @@
+{
+  "detailActionList": [
+    "__APPEND__",
+    {
+      "label": "{ButtonLabelPlaceholder}",
+      "name": "{ButtonNamePlaceholder}",
+      "acl": "edit",
+      "data": {
+        "handler": "{ModuleNamePlaceholder}:handlers/{EntityNamePlaceholder}/{ButtonNamePlaceholder}-handler"
+      },
+      "initFunction": "init{ButtonNameUpperPlaceholder}"
+    }
+  ]
+}
