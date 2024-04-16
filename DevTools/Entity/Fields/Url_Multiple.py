@@ -2,23 +2,21 @@ from DevTools.Entity.Fields.Base import Base
 from DevTools.Utils.Validators import ValidationOptions
 
 
-class Datetime(Base):
+class Url_Multiple(Base):
 
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "datetime"
+            "type": "urlMultiple"
         }
 
     availableOptions = {
         "required": ValidationOptions.TrueFalse,
-        "default": ValidationOptions.String,
-        "after": ValidationOptions.String,
-        "before": ValidationOptions.String,
-        "useNumericFormat": ValidationOptions.TrueFalse,
-        "hasSeconds": ValidationOptions.TrueFalse,
-        "minuteStep": ValidationOptions.Integer,
+        "maxCount": ValidationOptions.Integer,
+        "strip": ValidationOptions.TrueFalse,
         "audited": ValidationOptions.TrueFalse,
         "readOnly": ValidationOptions.TrueFalse,
         "readOnlyAfterCreate": ValidationOptions.TrueFalse
+
+
     }

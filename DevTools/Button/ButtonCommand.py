@@ -60,7 +60,7 @@ class ButtonCommand(BaseCommand):
         )
         js_populated_template = self.TemplateManager.set_template_values(
             self.FileManager.read_file(
-                os.path.join(self.script_dir, "Templates/Frontend/" + self.get_js_template(view, button_type))),
+                os.path.join(self.script_dir, "Templates/Backend/" + self.get_js_template(view, button_type))),
             self.generate_template_values(
                 module, entity, label, converted_name, style, view)
         )
@@ -68,7 +68,6 @@ class ButtonCommand(BaseCommand):
         json_dir = os.path.join(self.script_dir, f"../../src/backend/Resources/metadata/clientDefs/{entity}.json")
         merged_json = self.FileManager.merge_json_file(json_dir, json_populated_template)
         self.FileManager.write_file(json_dir, merged_json)
-        print(f"JSON file created/updated: {json_dir}")
 
         js_dir = os.path.join(self.script_dir, f"../../src/client/src/handlers/{entity}/{converted_name}-handler.js")
 
@@ -77,7 +76,6 @@ class ButtonCommand(BaseCommand):
             return
 
         self.FileManager.write_file(js_dir, js_populated_template)
-        print(f"JS file created: {js_dir}")
 
     @staticmethod
     def get_json_template(view, button_type):

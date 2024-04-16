@@ -1,9 +1,14 @@
 import re
 
+
 class ValidationOptions:
-    TrueFalse = 1
-    Integer = 2
-    Array = 3
+    Float = None
+    Int = None
+    ArrayInt = None
+    TrueFalse = "true/false"
+    String = "string"
+    Integer = "integer"
+    Array = "array"
 
 
 def validate_input(prompt, validator=None, error_message=None, default=None):

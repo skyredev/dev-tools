@@ -42,10 +42,10 @@ class FileManager:
     def read_file(source_path):
         # Load file from path_to_template
         try:
-            with open(source_path, 'r') as file:
+            with open(source_path, 'r', encoding='utf-8') as file:
                 content = json.load(file)
         except json.JSONDecodeError:
-            with open(source_path, 'r') as file:
+            with open(source_path, 'r', encoding='utf-8') as file:
                 content = file.read()
         return content
 
@@ -53,8 +53,10 @@ class FileManager:
         self.create_directory(os.path.dirname(destination_path))
 
         if isinstance(content, str):
-            with open(destination_path, 'w') as file:
+            with open(destination_path, 'w', encoding='utf-8') as file:
                 file.write(content)
         else:
             with open(destination_path, 'w', encoding='utf-8') as file:
                 json.dump(content, file, indent=2, ensure_ascii=False)
+
+        print(f"File created/updated: {destination_path}")

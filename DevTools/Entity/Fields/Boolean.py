@@ -2,22 +2,17 @@ from DevTools.Entity.Fields.Base import Base
 from DevTools.Utils.Validators import ValidationOptions
 
 
-class Datetime(Base):
+class Boolean(Base):
 
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "datetime"
+            "type": "bool"
         }
 
     availableOptions = {
         "required": ValidationOptions.TrueFalse,
-        "default": ValidationOptions.String,
-        "after": ValidationOptions.String,
-        "before": ValidationOptions.String,
-        "useNumericFormat": ValidationOptions.TrueFalse,
-        "hasSeconds": ValidationOptions.TrueFalse,
-        "minuteStep": ValidationOptions.Integer,
+        "default": ValidationOptions.TrueFalse,
         "audited": ValidationOptions.TrueFalse,
         "readOnly": ValidationOptions.TrueFalse,
         "readOnlyAfterCreate": ValidationOptions.TrueFalse

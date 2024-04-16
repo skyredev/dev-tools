@@ -1,12 +1,12 @@
 import json
 from DevTools.Utils.Validators import ValidationOptions
 
-class BaseField:
 
-    name = "BaseField"
+class Base:
+    name = "BaseLink"
 
     data = {
-        "type": "baseField"
+        "type": "baseLink"
     }
 
     availableOptions = {
