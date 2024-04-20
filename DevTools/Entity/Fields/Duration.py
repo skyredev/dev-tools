@@ -10,7 +10,7 @@ class Duration(Base):
         }
 
     availableOptions = {
-        "default": ValidationOptions.Int,
+        "default": ValidationOptions.Integer,
         "options": ValidationOptions.ArrayInt
 
     }

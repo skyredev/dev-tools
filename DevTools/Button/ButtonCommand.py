@@ -2,7 +2,7 @@ import os
 
 from DevTools.Base.BaseCommand import BaseCommand
 from DevTools.Utils.Validators import (
-    button_name_validator, button_name_validator_error,
+    button_name_validator
 )
 
 
@@ -25,7 +25,8 @@ class ButtonCommand(BaseCommand):
         "4": "warning"
     }
 
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    def __init__(self):
+        super().__init__(commandFile=__file__)
 
     def run(self):
         module = self.get_module()
@@ -43,8 +44,7 @@ class ButtonCommand(BaseCommand):
         else:
             button_type = "top-right"
 
-        name = self.TerminalManager.get_user_input("Enter the button name", button_name_validator,
-                                                   button_name_validator_error())
+        name = self.TerminalManager.get_user_input("Enter the button name", button_name_validator)
         converted_name = self.TerminalManager.get_converted_name(name)
         label = self.TerminalManager.get_user_input("Enter the button label", default=name)
 

@@ -19,11 +19,14 @@ class Base:
     def set_name(self, new_name):
         self.name = new_name
 
+    def get_name(self):
+        return self.name
+
     def set_value(self, key, value):
         self.data[key] = value
 
     def remove_value(self, key):
         self.data.pop(key)
 
-    def generate_json(self):
-        return json.dumps({self.name: self.data}, indent=4)
+    def generate_data(self):
+        return self.data
