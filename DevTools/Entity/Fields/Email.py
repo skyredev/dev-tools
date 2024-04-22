@@ -6,7 +6,8 @@ class Email(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "email"
+            "type": "email",
+            "notStorable": True
         }
 
     availableOptions = {

@@ -7,7 +7,9 @@ class Text(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "text"
+            "type": "text",
+            "rowsMin": 2,
+            "cutHeight": 200,
         }
 
     availableOptions = {

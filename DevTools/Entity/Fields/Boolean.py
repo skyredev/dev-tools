@@ -7,6 +7,7 @@ class Boolean(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
+            "notNull": True,
             "type": "bool"
         }
 

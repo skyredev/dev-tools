@@ -1,3 +1,4 @@
+import json
 import re
 
 
@@ -45,6 +46,17 @@ def string_validator(value):
     if isinstance(value, str):
         return value
     raise ValidationError("Input is not a valid string.")
+
+
+def json_object_validator(value):
+    try:
+        result = json.loads(value)
+        if isinstance(result, dict):
+            return result
+        else:
+            raise ValidationError("Input is not a valid JSON object. It must be a dictionary.")
+    except json.JSONDecodeError:
+        raise ValidationError("Input is not valid JSON.")
 
 
 def button_name_validator(name):
@@ -104,6 +116,7 @@ class ValidationOptions:
     TrueFalse = true_false_validator
     Integer = integer_validator
     Array = array_validator
+    JsonObject = json_object_validator
 
     Float.description = "\033[93mOption data type: Float\nRequired input format: Any number with or without decimal points\033[0m"
     ArrayInt.description = "\033[93mOption data type: Array of Integers\nRequired input format: [1, 2, 3]\033[0m"
@@ -111,4 +124,4 @@ class ValidationOptions:
     TrueFalse.description = "\033[93mOption data type: Boolean\nRequired input format: true or false\033[0m"
     Integer.description = "\033[93mOption data type: Integer\nRequired input format: Any whole number\033[0m"
     Array.description = "\033[93mOption data type: Array\nRequired input format: [\"value1\", \"value2\", \"value3\"]\033[0m"
-
+    JsonObject.description = "\033[93mOption data type: JSON Object\nRequired input format: {\"key1\": \"value1\", \"key2\": \"value2\"}\033[0m"

@@ -60,7 +60,7 @@ class ButtonCommand(BaseCommand):
         )
         js_populated_template = self.TemplateManager.set_template_values(
             self.FileManager.read_file(
-                os.path.join(self.script_dir, "Templates/Backend/" + self.get_js_template(view, button_type))),
+                    os.path.join(self.script_dir, "Templates/Frontend/" + self.get_js_template(view, button_type))),
             self.generate_template_values(
                 module, entity, label, converted_name, style, view)
         )

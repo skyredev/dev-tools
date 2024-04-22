@@ -7,7 +7,9 @@ class Datetime(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "datetime"
+            "notNull": False,
+            "type": "datetime",
+            "minuteStep": 30
         }
 
     availableOptions = {

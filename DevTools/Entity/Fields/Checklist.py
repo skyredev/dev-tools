@@ -7,7 +7,10 @@ class Checklist(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "checklist"
+            "type": "checklist",
+            "storeArrayValues": True,
+            "default": [],
+            "options": ["Placeholder"]
         }
 
     availableOptions = {

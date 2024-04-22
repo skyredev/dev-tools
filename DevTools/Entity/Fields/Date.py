@@ -7,6 +7,7 @@ class Date(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
+            "notNull": False,
             "type": "date"
         }
 

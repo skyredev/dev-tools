@@ -25,7 +25,7 @@ class EntityCommand(BaseCommand):
         entity_file_path = self.get_entity_file_path(entity_name)
 
         if os.path.exists(entity_file_path):
-            self.ModifyEntity.modify(entity_file_path)
+            self.ModifyEntity.modify(entity_file_path, entity_name)
         else:
             entity_type = self.TerminalManager.get_choice(
                 self.TerminalManager.sent_choice_to_user("Select the Entity type:", self.ENTITY_TYPES),

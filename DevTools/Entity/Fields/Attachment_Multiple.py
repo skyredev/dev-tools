@@ -7,7 +7,10 @@ class Attachment_Multiple(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "attachmentMultiple"
+            "type": "attachmentMultiple",
+            "previewSize": "medium",
+            "sourceList": [],
+            "accept": []
         }
 
     availableOptions = {
@@ -21,4 +24,13 @@ class Attachment_Multiple(Base):
         "readOnlyAfterCreate": ValidationOptions.TrueFalse,
         "optionsPath": ValidationOptions.String
 
+    }
+
+    linkDefs = {
+        "type": "hasChildren",
+        "entity": "Attachment",
+        "foreign": "parent",
+        "layoutRelationshipsDisabled": True,
+        "relationName": "attachments",
+        "utility": True
     }

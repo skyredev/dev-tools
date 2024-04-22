@@ -7,7 +7,7 @@ class Url(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "url"
+            "type": "url",
         }
 
     availableOptions = {

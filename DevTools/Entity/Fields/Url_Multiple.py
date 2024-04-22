@@ -7,7 +7,8 @@ class Url_Multiple(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "urlMultiple"
+            "type": "urlMultiple",
+            "storeArrayValues": True
         }
 
     availableOptions = {
@@ -17,6 +18,4 @@ class Url_Multiple(Base):
         "audited": ValidationOptions.TrueFalse,
         "readOnly": ValidationOptions.TrueFalse,
         "readOnlyAfterCreate": ValidationOptions.TrueFalse
-
-
     }

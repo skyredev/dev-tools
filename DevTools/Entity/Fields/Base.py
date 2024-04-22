@@ -9,6 +9,10 @@ class Base:
         "type": "baseField"
     }
 
+    linkDefs = {
+
+    }
+
     availableOptions = {
 
     }
@@ -28,5 +32,8 @@ class Base:
     def remove_value(self, key):
         self.data.pop(key)
 
-    def generate_data(self):
+    def get_data(self):
         return self.data
+
+    def get_link_defs(self):
+        return self.linkDefs

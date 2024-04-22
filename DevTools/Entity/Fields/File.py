@@ -7,7 +7,9 @@ class File(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "file"
+            "type": "file",
+            "sourceList": [],
+            "accept": []
         }
 
     availableOptions = {
@@ -18,7 +20,11 @@ class File(Base):
         "readOnly": ValidationOptions.TrueFalse,
         "readOnlyAfterCreate": ValidationOptions.TrueFalse,
         "audited": ValidationOptions.TrueFalse
+    }
 
-
-
+    linkDefs = {
+        "type": "belongsTo",
+        "entity": "Attachment",
+        "skipOrmDefs": True,
+        "utility": True
     }

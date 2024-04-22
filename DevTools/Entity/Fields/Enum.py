@@ -7,7 +7,8 @@ class Enum(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "enum"
+            "type": "enum",
+            "style": {}
         }
 
     availableOptions = {
@@ -18,7 +19,7 @@ class Enum(Base):
         "isSorted": ValidationOptions.TrueFalse,
         "translation": ValidationOptions.String,
         "optionsPath": ValidationOptions.String,
-        "style": ValidationOptions.String,
+        "style": ValidationOptions.JsonObject,
         "displayAsLabel": ValidationOptions.TrueFalse,
         "audited": ValidationOptions.TrueFalse,
         "readOnly": ValidationOptions.TrueFalse,

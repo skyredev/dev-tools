@@ -7,7 +7,10 @@ class Array(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "array"
+            "type": "array",
+            "storeArrayValues": True,
+            "noEmptyString": True,
+            "default": []
         }
 
     availableOptions = {

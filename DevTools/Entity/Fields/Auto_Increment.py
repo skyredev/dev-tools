@@ -7,7 +7,9 @@ class Auto_Increment(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "autoincrement"
+            "type": "autoincrement",
+            "autoincrement": True,
+            "unique": True
         }
 
     availableOptions = {

@@ -37,3 +37,23 @@ class TerminalManager:
         print(
             f"Function names will be: init{converted_name.capitalize().replace('-', '')}, action{converted_name.capitalize().replace('-', '')}")
         return converted_name
+
+    @staticmethod
+    def get_converted_field_name(name, type):
+        cleaned_name = re.sub(r'[^a-zA-Z0-9 ]', '', name)
+
+        parts = cleaned_name.split()
+
+        if parts:
+            converted_parts = [parts[0].lower()]
+            converted_parts += [part.capitalize() for part in parts[1:]]
+        else:
+            return ''
+
+        converted_name = ''.join(converted_parts)
+        print(f"{type} name converted: {name} -> {converted_name}")
+
+        return converted_name
+
+
+

@@ -6,7 +6,8 @@ class Phone(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "phone"
+            "type": "phone",
+            "notStorable": True
         }
 
     availableOptions = {

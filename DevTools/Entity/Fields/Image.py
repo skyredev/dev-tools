@@ -7,7 +7,8 @@ class Image(Base):
     def __init__(self, name):
         super().__init__(name)
         self.data = {
-            "type": "image"
+            "type": "image",
+            "previewSize": "small",
         }
 
     availableOptions = {
@@ -19,4 +20,11 @@ class Image(Base):
         "readOnlyAfterCreate": ValidationOptions.TrueFalse,
         "audited": ValidationOptions.TrueFalse
 
+    }
+
+    linkDefs = {
+        "type": "belongsTo",
+        "entity": "Attachment",
+        "skipOrmDefs": True,
+        "utility": True,
     }
