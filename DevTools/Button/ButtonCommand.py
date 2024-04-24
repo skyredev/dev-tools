@@ -1,9 +1,6 @@
 import os
 
 from DevTools.Base.BaseCommand import BaseCommand
-from DevTools.Utils.Validators import (
-    button_name_validator
-)
 
 
 class ButtonCommand(BaseCommand):
@@ -44,7 +41,7 @@ class ButtonCommand(BaseCommand):
         else:
             button_type = "top-right"
 
-        name = self.TerminalManager.get_user_input("Enter the button name", button_name_validator)
+        name = self.TerminalManager.get_user_input("Enter the button name", self.Validators.button_name_validator)
         converted_name = self.TerminalManager.get_converted_name(name)
         label = self.TerminalManager.get_user_input("Enter the button label", default=name)
 
@@ -56,13 +53,13 @@ class ButtonCommand(BaseCommand):
             self.FileManager.read_file(
                 os.path.join(self.script_dir, "Templates/Backend/" + self.get_json_template(view, button_type))),
             self.generate_template_values(
-                module, entity, label, converted_name, style, view)
+                module, entity, label, converted_name, name, style, view)
         )
         js_populated_template = self.TemplateManager.set_template_values(
             self.FileManager.read_file(
                     os.path.join(self.script_dir, "Templates/Frontend/" + self.get_js_template(view, button_type))),
             self.generate_template_values(
-                module, entity, label, converted_name, style, view)
+                module, entity, label, converted_name, name, style, view)
         )
 
         json_dir = os.path.join(self.script_dir, f"../../src/backend/Resources/metadata/clientDefs/{entity}.json")
@@ -91,17 +88,15 @@ class ButtonCommand(BaseCommand):
             return "mass_action.js"
         return "button.js"
 
-    @staticmethod
-    def generate_template_values(module, entity, label, converted_name, style, view):
+    def generate_template_values(self, module, entity, label, converted_name, name, style, view):
         return {
             "{ModuleNamePlaceholder}": module,
             "{EntityNamePlaceholder}": entity,
             "{ButtonLabelPlaceholder}": label,
             "{ButtonNamePlaceholder}": converted_name,
-            "{ButtonNameNoDashPlaceholder}": converted_name.replace("-", ""),
+            "{ButtonNameNoDashPlaceholder}": self.TerminalManager.convert_to_camel_case(name),
             "{ButtonStylePlaceholder}": style,
-            "{EntityNameUpperPlaceholder}": entity.capitalize(),
-            "{ButtonNameUpperPlaceholder}": converted_name.capitalize(),
-            "{FunctionNamePlaceholder}": converted_name.capitalize().replace('-', ''),
+            "{EntityNameUpperPlaceholder}": entity[0].upper() + entity[1:],
+            "{FunctionNamePlaceholder}": self.TerminalManager.convert_to_camel_case(name, start_lower=False),
             "{ViewPlaceholder}": view
         }

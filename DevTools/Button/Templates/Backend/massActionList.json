@@ -10,7 +10,7 @@
     "massActionDefs": {
         "{ButtonNamePlaceholder}": {
             "handler": "{ModuleNamePlaceholder}:handlers/{EntityNamePlaceholder}/{ButtonNamePlaceholder}-handler",
-            "initFunction": "init{ButtonNameUpperPlaceholder}"
+            "initFunction": "init{FunctionNamePlaceholder}"
         }
     }
 }

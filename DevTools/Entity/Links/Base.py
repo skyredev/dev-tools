@@ -28,5 +28,5 @@ class Base:
     def remove_value(self, key):
         self.data.pop(key)
 
-    def generate_data(self):
+    def get_data(self):
         return self.data

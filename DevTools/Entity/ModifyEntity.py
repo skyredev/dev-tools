@@ -58,28 +58,25 @@ class ModifyEntity(BaseCommand):
         else:
             selectedValue = 'link'
 
-        translation_data = self.MetadataManager.get(filepath)
-        if not translation_data:
-            translation_data = {}
-
         while True:
             values = self.get_available_values(section_path)
-            values_dict = {str(i + 1): field for i, field in enumerate(values)}
-            value_type = self.TerminalManager.get_choice(
-                self.TerminalManager.sent_choice_to_user(f"Select a {selectedValue} to add or 'Exit' to finish:",
-                                                         values_dict),
-                values_dict)
+            value_type = self.TerminalManager.get_choice_with_autocomplete(
+                f"Start typing a {selectedValue} type you want to add or 'Exit' to finish: ",
+                values, send_choices=True, validator=self.Validators.ChoiceValidator(values)
+            )
 
             if value_type == 'Exit':
                 break
 
-            value_name = self.TerminalManager.get_converted_field_name(self.TerminalManager.get_user_input(f"Enter the name for the new {selectedValue}"), selectedValue.capitalize())
+            value_name = self.TerminalManager.get_converted_field_name(
+                self.TerminalManager.get_user_input(f"Enter the name for the new {selectedValue}"),
+                selectedValue.capitalize())
             label = self.TerminalManager.get_user_input("Enter the label for the new field",
-                                                        default=value_name.capitalize())
+                                                        default=value_name[0].upper() + value_name[1:])
 
             hiddenField = ""
-            tooltip = ""
-            if section_path[0] == 'fields':
+            tooltip = "None"
+            if selectedValue == 'field':
                 hiddenField = self.TerminalManager.get_choice(
                     self.TerminalManager.sent_choice_to_user("Is this field hidden?", self.YES_NO),
                     self.YES_NO
@@ -100,11 +97,12 @@ class ModifyEntity(BaseCommand):
             field_data = value_instance.get_data()
             print(f"\033[94m{value_name}: {json.dumps(field_data, indent=4)}\033[0m")
 
-            linkDefs = value_instance.get_link_defs()
-            if len(linkDefs) > 0:
-                print('Link Definitions:')
-                print(f"\033[94m{value_name}: {json.dumps(linkDefs, indent=4)}\033[0m")
-                self.MetadataManager.set(['links'], value_name, linkDefs, filepath)
+            if section_path[0] == 'fields':
+                linkDefs = value_instance.get_link_defs()
+                if len(linkDefs) > 0:
+                    print('Link Definitions:')
+                    print(self.colorization('blue', f"{value_name}: {json.dumps(linkDefs, indent=4)}"))
+                    self.MetadataManager.set(['links'], value_name, linkDefs, filepath)
 
             self.MetadataManager.set(section_path, value_name, field_data, filepath)
             self.MetadataManager.set(section_path, value_name, label, translation_filepath)
@@ -117,8 +115,7 @@ class ModifyEntity(BaseCommand):
         else:
             values_dir = os.path.join(os.path.dirname(__file__), 'Links')
 
-        values = [filename.split('.')[0] for filename in os.listdir(values_dir) if
-                  filename.endswith('.py') and filename != '__init__.py']
+        values = self.FileManager.get_file_names(values_dir)
         values.append('Exit')
         return values
 
@@ -160,8 +157,8 @@ class ModifyEntity(BaseCommand):
             print(description)
             value = self.TerminalManager.get_user_input(f"Set value for {option_choice}", validator)
             value_instance.set_value(option_choice, value)
-            print(f"\033[94m{value_instance.get_name()}: {json.dumps(value_instance.get_data(), indent=4)}\033[0m")
-
+            print(self.colorization('blue',
+                                    f"{value_instance.get_name()}: {json.dumps(value_instance.get_data(), indent=4)})"))
 
     def delete_keys(self, filepath, section_path):
 
@@ -184,15 +181,15 @@ class ModifyEntity(BaseCommand):
 
             confirm = self.TerminalManager.get_choice(
                 self.TerminalManager.sent_choice_to_user(
-                    f"\033[93mAre you sure you want to delete the field '{section_path[0]}'?\033[0m",
+                    self.colorization('yellow', f"Are you sure you want to delete '{field_choice}'?"),
                     self.YES_NO),
                 self.YES_NO)
 
             if confirm == "Yes":
                 self.MetadataManager.delete(section_path, field_choice, filepath)
-                print(f"\033[93m'{field_choice}' has been deleted\033[0m")
+                print(self.colorization('yellow', f"'{field_choice}' was deleted"))
             else:
-                print(f"\033[93m'{field_choice}' was not deleted\033[0m")
+                print(self.colorization('yellow', f"'{field_choice}' was not deleted"))
 
     def translate_values(self, entity_name):
         language = self.TerminalManager.get_choice(
@@ -215,38 +212,29 @@ class ModifyEntity(BaseCommand):
     def translate_section(self, section_data, section_path, translation_filepath):
         if isinstance(section_data, dict):
             items = {str(i + 1): key for i, key in enumerate(section_data.keys())}
-        elif isinstance(section_data, list):
-            items = {str(i + 1): str(section_data[i]) for i in range(len(section_data))}
-        else:
-            print(f"\033[91mUnexpected Error. Invalid section data type\033[0m")
-            return
+            items[str(len(items) + 1)] = "Exit"
 
-        items[str(len(items) + 1)] = "Exit"
+            while True:
+                item_choice = self.TerminalManager.get_choice(
+                    self.TerminalManager.sent_choice_to_user(f"Select an item to translate or 'Exit' to finish:",
+                                                             items),
+                    items)
 
-        while True:
-            item_choice = self.TerminalManager.get_choice(
-                self.TerminalManager.sent_choice_to_user(f"Select an item to translate or 'Exit' to finish:", items),
-                items)
+                if item_choice == 'Exit':
+                    break
 
-            if item_choice == 'Exit':
-                break
+                key = item_choice
+                new_section_path = section_path + [key]
+                current_value = section_data[key]
 
-            if isinstance(section_data, list):
-                current_value = item_choice
-                new_section_path = section_path + [section_data.index(item_choice)]
-            else:
-                current_value = section_data[item_choice]
-                new_section_path = section_path + [item_choice]
-
-            if isinstance(current_value, (dict, list)):
-                self.translate_section(current_value, new_section_path, translation_filepath)
-            else:
-                print(f"\033[94mCurrent value: {current_value}\033[0m")
-                translated_value = self.TerminalManager.get_user_input(
-                    f"Enter the translation for '{' > '.join(str(new_section_path) for new_section_path in new_section_path)}'")
-                if isinstance(section_data, list):
-                    self.MetadataManager.set_array(section_path, section_data.index(item_choice), translated_value, translation_filepath)
+                if isinstance(current_value, dict):
+                    # Recursively call translate_section if the selected item is a dictionary
+                    self.translate_section(current_value, new_section_path, translation_filepath)
                 else:
+                    # Handle translation of the simple value
+                    print(self.colorization('blue', f"Current value: {current_value}"))
+                    translated_value = self.TerminalManager.get_user_input(
+                        f"Enter the translation for '{' > '.join(new_section_path)}'")
                     self.MetadataManager.set(section_path, item_choice, translated_value, translation_filepath)
-                print(
-                    f"\033[92mValue '{' > '.join(str(new_section_path) for new_section_path in new_section_path)}' translated to '{translated_value}' and saved.\033[0m")
+                    print(self.colorization('green',
+                                            f"Value '{' > '.join(new_section_path)}' translated to '{translated_value}' and saved"))

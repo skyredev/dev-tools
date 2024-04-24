@@ -60,3 +60,15 @@ class FileManager:
                 json.dump(content, file, indent=2, ensure_ascii=False)
 
         print(f"File created/updated: {destination_path}")
+
+    @staticmethod
+    def get_file_names(directory, extension='.py', exclude=None):
+        if exclude is None:
+            exclude = ['__init__.py']
+
+        if not os.path.exists(directory) or not os.path.isdir(directory):
+            return []
+
+        file_names = [filename.split('.')[0] for filename in os.listdir(directory) if
+                      filename.endswith(extension) and filename not in exclude]
+        return file_names

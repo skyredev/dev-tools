@@ -25,7 +25,7 @@ def main():
     while True:
         print("")
         usage()
-        command = input("Enter a command: ")
+        command = input("Enter a command: ").lower()
 
         if command in COMMAND_DESCRIPTIONS:
             if command == "button":
@@ -41,10 +41,6 @@ def main():
                 break
         else:
             print(f"Unknown command: {command}")
-
-
-
-
 
 
 if __name__ == "__main__":
