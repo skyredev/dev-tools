@@ -50,8 +50,8 @@ class ModifyEntity(BaseCommand):
                     break
 
     def add_values(self, filepath, section_path, entity_name):
-        translation_filepath = os.path.join(self.script_dir,
-                                            f"../../src/backend/Resources/i18n/en_US/{entity_name}.json")
+        translation_filepath = self.FileManager.ensure_json_exists(os.path.join(self.script_dir,
+                                                                                f"../../src/backend/Resources/i18n/en_US/{entity_name}.json"))
         selectedValue = ""
         if section_path[0] == 'fields':
             selectedValue = 'field'
@@ -197,10 +197,10 @@ class ModifyEntity(BaseCommand):
             self.LANGUAGES)
 
         opposite_language = "cs_CZ" if language == "en_US" else "en_US"
-        filepath = os.path.join(self.script_dir,
-                                f"../../src/backend/Resources/i18n/{opposite_language}/{entity_name}.json")
-        translation_filepath = os.path.join(self.script_dir,
-                                            f"../../src/backend/Resources/i18n/{language}/{entity_name}.json")
+        filepath = self.FileManager.ensure_json_exists(os.path.join(self.script_dir,
+                                                                    f"../../src/backend/Resources/i18n/{opposite_language}/{entity_name}.json"))
+        translation_filepath = self.FileManager.ensure_json_exists(os.path.join(self.script_dir,
+                                                                                f"../../src/backend/Resources/i18n/{language}/{entity_name}.json"))
 
         data = self.MetadataManager.get(filepath)
         if not data:

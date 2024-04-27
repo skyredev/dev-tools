@@ -13,6 +13,11 @@ class FileManager:
         if not os.path.exists(directory):
             os.makedirs(directory)
 
+    def ensure_json_exists(self, file_path):
+        if not os.path.exists(file_path):
+            self.write_file(file_path, '{}')
+        return file_path
+
     def merge_json(self, existing_json, new_json):
         merged_json = existing_json.copy()
         for key, value in new_json.items():
