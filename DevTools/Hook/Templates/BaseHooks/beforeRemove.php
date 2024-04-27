@@ -4,6 +4,7 @@ namespace Espo\Modules\{ModuleNamePlaceholder}\Hooks\{EntityNamePlaceholder};
 use Espo\Core\Hook\Hook\BeforeRemove;
 use Espo\ORM\EntityManager;
 use Espo\ORM\Entity;
+use Espo\Core\Utils\Log;
 use Espo\ORM\Repository\Option\RemoveOptions;
 
 class {HookNamePlaceHolder} implements beforeRemove

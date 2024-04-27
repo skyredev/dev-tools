@@ -4,6 +4,7 @@ namespace Espo\Modules\{ModuleNamePlaceholder}\Hooks\{EntityNamePlaceholder};
 use Espo\Core\Hook\Hook\AfterMassRelate;
 use Espo\ORM\EntityManager;
 use Espo\ORM\Entity;
+use Espo\Core\Utils\Log;
 use Espo\ORM\Repository\Option\SaveOptions;
 use Espo\ORM\Repository\Option\MassRelateOptions;
 use Espo\ORM\Query\Select;
