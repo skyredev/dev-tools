@@ -1,14 +1,19 @@
 from DevTools.Button.ButtonCommand import ButtonCommand
 from DevTools.Hook.HookCommand import HookCommand
 from DevTools.Entity.EntityCommand import EntityCommand
+from DevTools.Base.BaseCommand import BaseCommand
 
 COMMAND_DESCRIPTIONS = {
     "button": "Creates a new button",
     "hook": "Creates a new hook",
     "entity": "Creates a new entity",
-    "help": "Display this help message",
+    "help": "Displays help message",
     "exit": "Exit the script"
 }
+
+
+def help_message():
+    print("\nNEJAKE KRATKE\nInstrukce k pouziti napr")
 
 
 def usage():
@@ -21,26 +26,31 @@ def main():
     button_Command = ButtonCommand()
     hook_Command = HookCommand()
     entity_Command = EntityCommand()
+    baseCommand = BaseCommand(__file__)
 
     while True:
         print("")
         usage()
-        command = input("Enter a command: ").lower()
+        command = baseCommand.TerminalManager.get_choice_with_autocomplete(
+            "Enter a command: ",
+            list(COMMAND_DESCRIPTIONS.keys()),
+            send_choices=False,
+            validator=baseCommand.Validators.ChoiceValidator(list(COMMAND_DESCRIPTIONS.keys()))
+        )
 
-        if command in COMMAND_DESCRIPTIONS:
-            if command == "button":
+        match command:
+            case "button":
                 button_Command.run()
-            elif command == "hook":
+            case "hook":
                 hook_Command.run()
-            elif command == "help":
-                usage()
-            elif command == "entity":
+            case "entity":
                 entity_Command.run()
-            elif command == "exit":
-                print("Exiting the script.")
+            case "help":
+                help_message()
+            case "exit":
                 break
-        else:
-            print(f"Unknown command: {command}")
+            case _:
+                print(f"Unknown command: {command}")
 
 
 if __name__ == "__main__":
