@@ -4,23 +4,23 @@ from DevTools.Base.BaseCommand import BaseCommand
 
 
 class ButtonCommand(BaseCommand):
-    BUTTON_VIEW_TYPES = {
-        "1": "detail",
-        "2": "list",
-        "3": "edit"
-    }
+    BUTTON_VIEW_TYPES = [
+        "detail",
+        "list",
+        "edit"
+    ]
 
-    BUTTON_DETAIL_TYPES = {
-        "1": "dropdown",
-        "2": "top-right"
-    }
+    BUTTON_DETAIL_TYPES = [
+        "dropdown",
+        "top-right"
+    ]
 
-    BUTTON_STYLES = {
-        "1": "default",
-        "2": "success",
-        "3": "danger",
-        "4": "warning"
-    }
+    BUTTON_STYLES = [
+        "default",
+        "success",
+        "danger",
+        "warning"
+    ]
 
     def __init__(self):
         super().__init__(commandFile=__file__)
@@ -28,14 +28,18 @@ class ButtonCommand(BaseCommand):
     def run(self):
         module = self.get_module()
         entity = self.get_entity_name()
-        view = self.TerminalManager.get_choice(
-            self.TerminalManager.sent_choice_to_user("Select the view:", self.BUTTON_VIEW_TYPES),
-            self.BUTTON_VIEW_TYPES)
+        view = self.TerminalManager.get_choice_with_autocomplete(
+            "Start typing the view type: ",
+            self.BUTTON_VIEW_TYPES,
+            validator=self.Validators.ChoiceValidator(self.BUTTON_VIEW_TYPES)
+        )
 
         if view == "detail":
-            button_type = self.TerminalManager.get_choice(
-                self.TerminalManager.sent_choice_to_user("Select the button type for the detail view:",
-                                                         self.BUTTON_DETAIL_TYPES), self.BUTTON_DETAIL_TYPES)
+            button_type = self.TerminalManager.get_choice_with_autocomplete(
+                "Start typing the button type: ",
+                self.BUTTON_DETAIL_TYPES,
+                validator=self.Validators.ChoiceValidator(self.BUTTON_DETAIL_TYPES)
+            )
         elif view == "list":
             button_type = "mass-action"
         else:
@@ -45,9 +49,11 @@ class ButtonCommand(BaseCommand):
         converted_name = self.TerminalManager.get_converted_name(name)
         label = self.TerminalManager.get_user_input("Enter the button label", default=name)
 
-        style = self.TerminalManager.get_choice(
-            self.TerminalManager.sent_choice_to_user("Select the button style:", self.BUTTON_STYLES),
-            self.BUTTON_STYLES)
+        style = self.TerminalManager.get_choice_with_autocomplete(
+            "Start typing the button style: ",
+            self.BUTTON_STYLES,
+            validator=self.Validators.ChoiceValidator(self.BUTTON_STYLES)
+        )
 
         json_populated_template = self.TemplateManager.set_template_values(
             self.FileManager.read_file(

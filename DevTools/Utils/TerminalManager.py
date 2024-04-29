@@ -23,25 +23,27 @@ class TerminalManager:
     def get_user_input(self, prompt_text, validator=None, default=None):
         return self.Validators.validate_input(prompt_text, validator, default)
 
-    @staticmethod
-    def sent_choice_to_user(introMsg, choices):
-        output = introMsg + '\n'
-        if isinstance(choices, dict):
-            for choiceKey, choiceValue in choices.items():
-                output += f"{choiceKey}. {choiceValue}\n"
-        elif isinstance(choices, list):
-            # This case is handled by converting lists to dictionaries beforehand
-            for index, choice in enumerate(choices):
-                output += f"{index + 1}. {choice}\n"
-        output += 'Please enter your choice'
-        return output
-
-    def get_choice(self, prompt_text, choices):
-        choice_validator = self.Validators.ChoiceValidator(choices)
-        choice = None
-        while choice not in choices:
-            choice = self.get_user_input(prompt_text, choice_validator)
-        return choices[choice]
+    # DEPRECATED METHODS BELOW, USE get_choice_with_autocomplete INSTEAD (list should be passed as choices)
+    #
+    # @staticmethod
+    # def sent_choice_to_user(introMsg, choices):
+    #     output = introMsg + '\n'
+    #     if isinstance(choices, dict):
+    #         for choiceKey, choiceValue in choices.items():
+    #             output += f"{choiceKey}. {choiceValue}\n"
+    #     elif isinstance(choices, list):
+    #         # This case is handled by converting lists to dictionaries beforehand
+    #         for index, choice in enumerate(choices):
+    #             output += f"{index + 1}. {choice}\n"
+    #     output += 'Please enter your choice'
+    #     return output
+    #
+    # def get_choice(self, prompt_text, choices):
+    #     choice_validator = self.Validators.ChoiceValidator(choices)
+    #     choice = None
+    #     while choice not in choices:
+    #         choice = self.get_user_input(prompt_text, choice_validator)
+    #     return choices[choice]
 
     @staticmethod
     def input_with_autocomplete(prompt_text, choices):
@@ -49,7 +51,7 @@ class TerminalManager:
         user_input = prompt(prompt_text, completer=completer)
         return user_input
 
-    def get_choice_with_autocomplete(self, prompt_text, choices, send_choices=False, validator=None):
+    def get_choice_with_autocomplete(self, prompt_text, choices: list, send_choices=True, validator=None):
         if send_choices:
             output = ''
             for index, choice in enumerate(choices):

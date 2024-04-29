@@ -66,5 +66,5 @@ class CreateEntity(BaseCommand):
     def generate_entity_defs_templates(self, entity_name):
         return {
             entity_type: getattr(sys.modules[__name__], entity_type).create_new_entity(entity_name=entity_name)
-            for entity_type in self.ENTITY_TYPES.values()
+            for entity_type in self.ENTITY_TYPES
         }

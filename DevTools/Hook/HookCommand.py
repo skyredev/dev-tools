@@ -4,15 +4,15 @@ from DevTools.Base.BaseCommand import BaseCommand
 
 
 class HookCommand(BaseCommand):
-    HOOK_TYPES = {
-        "1": "beforeSave",
-        "2": "afterSave",
-        "3": "beforeRemove",
-        "4": "afterRemove",
-        "5": "afterRelate",
-        "6": "afterUnrelate",
-        "7": "afterMassRelate"
-    }
+    HOOK_TYPES = [
+        "beforeSave",
+        "afterSave",
+        "beforeRemove",
+        "afterRemove",
+        "afterRelate",
+        "afterUnrelate",
+        "afterMassRelate"
+    ]
 
     def __init__(self):
         super().__init__(commandFile=__file__)
@@ -21,9 +21,11 @@ class HookCommand(BaseCommand):
         module = self.get_module()
         entity = self.get_entity_name()
 
-        hook_type = self.TerminalManager.get_choice(
-            self.TerminalManager.sent_choice_to_user("Select the hook type:", self.HOOK_TYPES),
-            self.HOOK_TYPES)
+        hook_type = self.TerminalManager.get_choice_with_autocomplete(
+            "Start typing the hook type: ",
+            self.HOOK_TYPES,
+            validator=self.Validators.ChoiceValidator(self.HOOK_TYPES)
+        )
 
         hook_name = self.TerminalManager.get_user_input("Enter the hook name", self.Validators.hook_name_validator)
 

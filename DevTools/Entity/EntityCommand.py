@@ -6,18 +6,18 @@ from DevTools.Entity.ModifyEntity import ModifyEntity
 
 
 class EntityCommand(BaseCommand):
-    ENTITY_TYPES = {
-        "1": "Base",
-        "2": "BasePlus",
-        "3": "Event",
-        "4": "Person",
-        "5": "Company"
-    }
+    ENTITY_TYPES = [
+        "Base",
+        "BasePlus",
+        "Event",
+        "Person",
+        "Company"
+    ]
 
-    ACTION = {
-        "1": "Create",
-        "2": "Modify"
-    }
+    ACTION = [
+        "Create",
+        "Modify"
+    ]
 
     def __init__(self):
         super().__init__(commandFile=__file__)
@@ -32,15 +32,14 @@ class EntityCommand(BaseCommand):
         if os.path.exists(entity_file_path):
             self.ModifyEntity.modify(entity_file_path, entity_name)
         else:
-            action = self.TerminalManager.get_choice(
-                self.TerminalManager.sent_choice_to_user("Would you like to create or modify the existing entity?",
-                                                         self.ACTION),
-                self.ACTION
+            action = self.TerminalManager.get_choice_with_autocomplete(
+                "What would you like to do with the entity? ",
+                self.ACTION,
+                validator=self.Validators.ChoiceValidator(self.ACTION)
             )
             if action == "Create":
-                entity_type = self.TerminalManager.get_choice(
-                    self.TerminalManager.sent_choice_to_user("Select the Entity type:", self.ENTITY_TYPES),
-                    self.ENTITY_TYPES
+                entity_type = self.TerminalManager.get_choice_with_autocomplete(
+                    "Start typing the entity type: ", self.ENTITY_TYPES, validator=self.Validators.ChoiceValidator(self.ENTITY_TYPES)
                 )
 
                 self.CreateEntity.create(module, entity_name, entity_type)

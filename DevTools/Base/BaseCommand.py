@@ -36,7 +36,7 @@ class BaseCommand:
         entity = self.TerminalManager.get_choice_with_autocomplete(
             "Enter the entity name: ", self.FileManager.get_file_names(
                 self.entity_defs_dir, ".json"
-            ), validator=self.Validators.entity_validator)
+            ), send_choices=False, validator=self.Validators.entity_validator)
         return entity
 
     @staticmethod

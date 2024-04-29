@@ -6,35 +6,35 @@ from DevTools.Base.BaseCommand import BaseCommand
 
 
 class ModifyEntity(BaseCommand):
-    MODIFY_ACTIONS = {
-        "1": "Add Field",
-        "2": "Delete Field",
-        "3": "Add Link",
-        "4": "Delete Link",
-        "5": "Translate Value",
-        "6": "Exit"
-    }
+    MODIFY_ACTIONS = [
+        "Add Field",
+        "Delete Field",
+        "Add Link",
+        "Delete Link",
+        "Translate Value",
+        "Exit"
+    ]
 
-    YES_NO = {
-        "1": "Yes",
-        "2": "No"
-    }
+    YES_NO = [
+         "Yes",
+         "No"
+    ]
 
-    LANGUAGES = {
-        "1": "cs_CZ",
-        "2": "en_US"
-    }
+    LANGUAGES = [
+        "cs_CZ",
+        "en_US"
+    ]
 
     def __init__(self):
         super().__init__(commandFile=__file__)
 
     def modify(self, filepath, entity_name):
         while True:
-            choice = (self.TerminalManager.get_choice
-                      (self.TerminalManager.sent_choice_to_user("Entity exists. Choose an action:",
-                                                                self.MODIFY_ACTIONS),
-                       self.MODIFY_ACTIONS
-                       ))
+            choice = self.TerminalManager.get_choice_with_autocomplete(
+                f"Entity '{entity_name}' already exists. What would you like to do? ",
+                self.MODIFY_ACTIONS,
+                validator=self.Validators.ChoiceValidator(self.MODIFY_ACTIONS)
+            )
             match choice:
                 case "Add Field":
                     self.add_values(filepath, ['fields'], entity_name)
@@ -62,14 +62,14 @@ class ModifyEntity(BaseCommand):
             values = self.get_available_values(section_path)
             value_type = self.TerminalManager.get_choice_with_autocomplete(
                 f"Start typing a {selectedValue} type you want to add or 'Exit' to finish: ",
-                values, send_choices=True, validator=self.Validators.ChoiceValidator(values)
+                values, validator=self.Validators.ChoiceValidator(values)
             )
 
             if value_type == 'Exit':
                 break
 
             value_name = self.TerminalManager.get_converted_field_name(
-                self.TerminalManager.get_user_input(f"Enter the name for the new {selectedValue}"),
+                self.TerminalManager.get_user_input(f"Enter the name for the new {selectedValue}", validator=self.Validators.empty_string_validator),
                 selectedValue.capitalize())
             label = self.TerminalManager.get_user_input("Enter the label for the new field",
                                                         default=value_name[0].upper() + value_name[1:])
@@ -77,9 +77,8 @@ class ModifyEntity(BaseCommand):
             hiddenField = ""
             tooltip = "None"
             if selectedValue == 'field':
-                hiddenField = self.TerminalManager.get_choice(
-                    self.TerminalManager.sent_choice_to_user("Is this field hidden?", self.YES_NO),
-                    self.YES_NO
+                hiddenField = self.TerminalManager.get_choice_with_autocomplete(
+                    "Should the field be hidden? ", self.YES_NO, validator=self.Validators.ChoiceValidator(self.YES_NO)
                 )
 
                 tooltip = self.TerminalManager.get_user_input("Enter the tooltip for the new field", default='None')
@@ -138,14 +137,13 @@ class ModifyEntity(BaseCommand):
             return {}, value_type.lower()
 
     def configure_value_options(self, options, value_instance):
-        option_keys = {str(i + 1): option for i, option in enumerate(options.keys())}
-        option_keys[str(len(option_keys) + 1)] = 'Exit'  # Add 'Exit' as the last option
-
+        option_keys = list(options.keys())
+        option_keys.append('Exit')
         while True:
-            option_choice = self.TerminalManager.get_choice(
-                self.TerminalManager.sent_choice_to_user("Select an option to configure or 'Exit' to finish",
-                                                         option_keys),
-                option_keys)
+            option_choice = self.TerminalManager.get_choice_with_autocomplete(
+                "Select an option to configure or 'Exit' to finish: ",
+                option_keys, validator=self.Validators.ChoiceValidator(option_keys)
+            )
 
             if option_choice == 'Exit':
                 break
@@ -161,29 +159,28 @@ class ModifyEntity(BaseCommand):
                                     f"{value_instance.get_name()}: {json.dumps(value_instance.get_data(), indent=4)})"))
 
     def delete_keys(self, filepath, section_path):
-
         while True:
             keys = self.MetadataManager.list(section_path, filepath)
             if not keys:
                 print("No fields available to delete.")
                 return
 
-            keys_dict = {str(i + 1): key for i, key in enumerate(keys)}
-            keys_dict[str(len(keys_dict) + 1)] = "Exit"
+            keys.append('Exit')
 
-            field_choice = self.TerminalManager.get_choice(
-                self.TerminalManager.sent_choice_to_user(f"Select a {section_path[0]} to delete or 'Exit' to finish:",
-                                                         keys_dict),
-                keys_dict)
+            field_choice = self.TerminalManager.get_choice_with_autocomplete(
+                "Start typing a field to delete or 'Exit' to finish: ",
+                keys,
+                validator=self.Validators.ChoiceValidator(keys)
+            )
 
             if field_choice == 'Exit':
                 break
 
-            confirm = self.TerminalManager.get_choice(
-                self.TerminalManager.sent_choice_to_user(
-                    self.colorization('yellow', f"Are you sure you want to delete '{field_choice}'?"),
-                    self.YES_NO),
-                self.YES_NO)
+            confirm = self.TerminalManager.get_choice_with_autocomplete(
+                f"Are you sure you want to delete '{field_choice}'? ",
+                self.YES_NO,
+                validator=self.Validators.ChoiceValidator(self.YES_NO)
+            )
 
             if confirm == "Yes":
                 self.MetadataManager.delete(section_path, field_choice, filepath)
@@ -192,9 +189,11 @@ class ModifyEntity(BaseCommand):
                 print(self.colorization('yellow', f"'{field_choice}' was not deleted"))
 
     def translate_values(self, entity_name):
-        language = self.TerminalManager.get_choice(
-            self.TerminalManager.sent_choice_to_user("Select the language to translate to:", self.LANGUAGES),
-            self.LANGUAGES)
+        language = self.TerminalManager.get_choice_with_autocomplete(
+            "Select the language to translate to: ",
+            self.LANGUAGES,
+            validator=self.Validators.ChoiceValidator(self.LANGUAGES)
+        )
 
         opposite_language = "cs_CZ" if language == "en_US" else "en_US"
         filepath = self.FileManager.ensure_json_exists(os.path.join(self.script_dir,
@@ -211,14 +210,15 @@ class ModifyEntity(BaseCommand):
 
     def translate_section(self, section_data, section_path, translation_filepath):
         if isinstance(section_data, dict):
-            items = {str(i + 1): key for i, key in enumerate(section_data.keys())}
-            items[str(len(items) + 1)] = "Exit"
+            items = list(section_data.keys())
+            items.append('Exit')
 
             while True:
-                item_choice = self.TerminalManager.get_choice(
-                    self.TerminalManager.sent_choice_to_user(f"Select an item to translate or 'Exit' to finish:",
-                                                             items),
-                    items)
+                item_choice = self.TerminalManager.get_choice_with_autocomplete(
+                    f"Start typing a field to translate or 'Exit' to finish: ",
+                    items,
+                    validator=self.Validators.ChoiceValidator(items)
+                )
 
                 if item_choice == 'Exit':
                     break
