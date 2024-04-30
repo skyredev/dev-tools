@@ -23,7 +23,7 @@ class ButtonCommand(BaseCommand):
     ]
 
     def __init__(self):
-        super().__init__(commandFile=__file__)
+        super().__init__(command_file=__file__)
 
     def run(self):
         module = self.get_module()
@@ -57,22 +57,22 @@ class ButtonCommand(BaseCommand):
 
         json_populated_template = self.TemplateManager.set_template_values(
             self.FileManager.read_file(
-                os.path.join(self.script_dir, "Templates/Backend/" + self.get_json_template(view, button_type))),
+                os.path.join(self.script_path, "Templates/Backend/" + self.get_json_template(view, button_type))),
             self.generate_template_values(
                 module, entity, label, converted_name, name, style, view)
         )
         js_populated_template = self.TemplateManager.set_template_values(
             self.FileManager.read_file(
-                    os.path.join(self.script_dir, "Templates/Frontend/" + self.get_js_template(view, button_type))),
+                    os.path.join(self.script_path, "Templates/Frontend/" + self.get_js_template(view, button_type))),
             self.generate_template_values(
                 module, entity, label, converted_name, name, style, view)
         )
 
-        json_dir = os.path.join(self.script_dir, f"../../src/backend/Resources/metadata/clientDefs/{entity}.json")
+        json_dir = os.path.join(self.current_dir, f"src/backend/Resources/metadata/clientDefs/{entity}.json")
         merged_json = self.FileManager.merge_json_file(json_dir, json_populated_template)
         self.FileManager.write_file(json_dir, merged_json)
 
-        js_dir = os.path.join(self.script_dir, f"../../src/client/src/handlers/{entity}/{converted_name}-handler.js")
+        js_dir = os.path.join(self.current_dir, f"src/client/src/handlers/{entity}/{converted_name}-handler.js")
 
         if os.path.isfile(js_dir):
             print(f"Error: JS file already exists: {js_dir}")

@@ -10,15 +10,16 @@ from DevTools.Utils.MetadataManager import MetadataManager
 
 class BaseCommand:
 
-    def __init__(self, commandFile):
-        self.script_dir = os.path.dirname(os.path.abspath(commandFile))
+    def __init__(self, command_file):
+        self.current_dir = os.getcwd()
+        self.script_path = os.path.dirname(os.path.abspath(command_file))
         self.Validators = Validators()
         self.TerminalManager = TerminalManager(self.Validators)
         self.TemplateManager = TemplateManager()
         self.MetadataManager = MetadataManager()
         self.FileManager = FileManager(self.TerminalManager, self.TemplateManager)
-        self.entity_defs_dir = os.path.join(self.script_dir, "../../src/backend/Resources/metadata/entityDefs")
-        self.package_json_dir = os.path.join(self.script_dir, "../../package.json")
+        self.entity_defs_dir = os.path.join(self.current_dir, "src/backend/Resources/metadata/entityDefs")
+        self.package_json_dir = os.path.join(self.current_dir, "package.json")
 
     def get_module_suggestion(self):
         if os.path.isfile(self.package_json_dir):

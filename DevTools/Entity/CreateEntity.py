@@ -13,7 +13,7 @@ from DevTools.Entity.Templates.Backend.Metadata.EntityDefs.Company import Compan
 
 class CreateEntity(BaseCommand):
     def __init__(self, ENTITY_TYPES):
-        super().__init__(commandFile=__file__)
+        super().__init__(command_file=__file__)
         self.ENTITY_TYPES = ENTITY_TYPES
 
     def create(self, module, entity_name, entity_type):
@@ -24,37 +24,37 @@ class CreateEntity(BaseCommand):
 
     def get_paths(self, entity_name):
         return {
-            "scopes": os.path.join(self.script_dir, f"../../src/backend/Resources/metadata/scopes/{entity_name}.json"),
-            "entityDefs": os.path.join(self.script_dir,
-                                       f"../../src/backend/Resources/metadata/entityDefs/{entity_name}.json"),
-            "recordDefs": os.path.join(self.script_dir,
-                                       f"../../src/backend/Resources/metadata/recordDefs/{entity_name}.json"),
-            "clientDefs": os.path.join(self.script_dir,
-                                       f"../../src/backend/Resources/metadata/clientDefs/{entity_name}.json"),
-            "i18n_cs_CZ": os.path.join(self.script_dir, f"../../src/backend/Resources/i18n/cs_CZ/{entity_name}.json"),
-            "i18n_en_US": os.path.join(self.script_dir, f"../../src/backend/Resources/i18n/en_US/{entity_name}.json")
+            "scopes": os.path.join(self.current_dir, f"src/backend/Resources/metadata/scopes/{entity_name}.json"),
+            "entityDefs": os.path.join(self.current_dir,
+                                       f"src/backend/Resources/metadata/entityDefs/{entity_name}.json"),
+            "recordDefs": os.path.join(self.current_dir,
+                                       f"src/backend/Resources/metadata/recordDefs/{entity_name}.json"),
+            "clientDefs": os.path.join(self.current_dir,
+                                       f"src/backend/Resources/metadata/clientDefs/{entity_name}.json"),
+            "i18n_cs_CZ": os.path.join(self.current_dir, f"src/backend/Resources/i18n/cs_CZ/{entity_name}.json"),
+            "i18n_en_US": os.path.join(self.current_dir, f"src/backend/Resources/i18n/en_US/{entity_name}.json")
         }
 
     def get_templates(self, entity_type, entity_name, module, ENTITY_DEFS_TEMPLATES):
         return {
             "scopes": self.TemplateManager.set_template_values(
                 self.FileManager.read_file(
-                    os.path.join(self.script_dir, f"Templates/Backend/Metadata/Scopes/{entity_type}.json")),
+                    os.path.join(self.script_path, f"Templates/Backend/Metadata/Scopes/{entity_type}.json")),
                 {"{ModuleNamePlaceholder}": module}
             ),
             "entityDefs": ENTITY_DEFS_TEMPLATES[entity_type],
             "recordDefs": self.FileManager.read_file(
-                os.path.join(self.script_dir, f"Templates/Backend/Metadata/RecordDefs/{entity_type}.json")),
+                os.path.join(self.script_path, f"Templates/Backend/Metadata/RecordDefs/{entity_type}.json")),
             "clientDefs": self.FileManager.read_file(
-                os.path.join(self.script_dir, f"Templates/Backend/Metadata/ClientDefs/{entity_type}.json")),
+                os.path.join(self.script_path, f"Templates/Backend/Metadata/ClientDefs/{entity_type}.json")),
             "i18n_cs_CZ": self.TemplateManager.set_template_values(
                 self.FileManager.read_file(
-                    os.path.join(self.script_dir, f"Templates/Backend/i18n/cs_CZ/{entity_type}.json")),
+                    os.path.join(self.script_path, f"Templates/Backend/i18n/cs_CZ/{entity_type}.json")),
                 {"{EntityNamePlaceholder}": entity_name}
             ),
             "i18n_en_US": self.TemplateManager.set_template_values(
                 self.FileManager.read_file(
-                    os.path.join(self.script_dir, f"Templates/Backend/i18n/en_US/{entity_type}.json")),
+                    os.path.join(self.script_path, f"Templates/Backend/i18n/en_US/{entity_type}.json")),
                 {"{EntityNamePlaceholder}": entity_name}
             )
         }

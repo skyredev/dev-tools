@@ -26,7 +26,7 @@ class ModifyEntity(BaseCommand):
     ]
 
     def __init__(self):
-        super().__init__(commandFile=__file__)
+        super().__init__(command_file=__file__)
 
     def modify(self, filepath, entity_name):
         while True:
@@ -50,8 +50,8 @@ class ModifyEntity(BaseCommand):
                     break
 
     def add_values(self, filepath, section_path, entity_name):
-        translation_filepath = self.FileManager.ensure_json_exists(os.path.join(self.script_dir,
-                                                                                f"../../src/backend/Resources/i18n/en_US/{entity_name}.json"))
+        translation_filepath = self.FileManager.ensure_json_exists(os.path.join(self.current_dir,
+                                                                                f"src/backend/Resources/i18n/en_US/{entity_name}.json"))
         selectedValue = ""
         if section_path[0] == 'fields':
             selectedValue = 'field'
@@ -110,7 +110,7 @@ class ModifyEntity(BaseCommand):
 
     def get_available_values(self, section_path):
         if section_path[0] == 'fields':
-            values_dir = os.path.join(self.script_dir, 'Fields')
+            values_dir = os.path.join(self.script_path, 'Fields')
         else:
             values_dir = os.path.join(os.path.dirname(__file__), 'Links')
 
@@ -196,10 +196,10 @@ class ModifyEntity(BaseCommand):
         )
 
         opposite_language = "cs_CZ" if language == "en_US" else "en_US"
-        filepath = self.FileManager.ensure_json_exists(os.path.join(self.script_dir,
-                                                                    f"../../src/backend/Resources/i18n/{opposite_language}/{entity_name}.json"))
-        translation_filepath = self.FileManager.ensure_json_exists(os.path.join(self.script_dir,
-                                                                                f"../../src/backend/Resources/i18n/{language}/{entity_name}.json"))
+        filepath = self.FileManager.ensure_json_exists(os.path.join(self.current_dir,
+                                                                    f"src/backend/Resources/i18n/{opposite_language}/{entity_name}.json"))
+        translation_filepath = self.FileManager.ensure_json_exists(os.path.join(self.current_dir,
+                                                                                f"src/backend/Resources/i18n/{language}/{entity_name}.json"))
 
         data = self.MetadataManager.get(filepath)
         if not data:

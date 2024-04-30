@@ -20,7 +20,7 @@ class EntityCommand(BaseCommand):
     ]
 
     def __init__(self):
-        super().__init__(commandFile=__file__)
+        super().__init__(command_file=__file__)
         self.CreateEntity = CreateEntity(ENTITY_TYPES=self.ENTITY_TYPES)
         self.ModifyEntity = ModifyEntity()
 
@@ -48,4 +48,4 @@ class EntityCommand(BaseCommand):
                 self.ModifyEntity.modify(entity_file_path, entity_name)
 
     def get_entity_file_path(self, entity_name):
-        return os.path.join(self.script_dir, f"../../src/backend/Resources/metadata/entityDefs/{entity_name}.json")
+        return os.path.join(self.current_dir, f"src/backend/Resources/metadata/entityDefs/{entity_name}.json")
