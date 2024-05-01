@@ -72,5 +72,5 @@ class MetadataManager:
                 del current_section[key]
 
             file.seek(0)
-            file.write(json.dumps(data, indent=4))
+            file.write(json.dumps(data, indent=4, ensure_ascii=False))
             file.truncate()

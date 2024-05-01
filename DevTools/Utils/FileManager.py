@@ -68,12 +68,19 @@ class FileManager:
 
     @staticmethod
     def get_file_names(directory, extension='.py', exclude=None):
-        if exclude is None:
-            exclude = ['__init__.py']
+        if extension == 'folder':
+            if exclude is None:
+                exclude = ['__init__.py']
+            folder_names = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and folder not in exclude]
+            return folder_names
 
-        if not os.path.exists(directory) or not os.path.isdir(directory):
-            return []
+        else:
+            if exclude is None:
+                exclude = ['__init__.py']
 
-        file_names = [filename.split('.')[0] for filename in os.listdir(directory) if
-                      filename.endswith(extension) and filename not in exclude]
-        return file_names
+            if not os.path.exists(directory) or not os.path.isdir(directory):
+                return []
+
+            file_names = [filename.split('.')[0] for filename in os.listdir(directory) if
+                          filename.endswith(extension) and filename not in exclude]
+            return file_names

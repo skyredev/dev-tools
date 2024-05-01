@@ -3,12 +3,14 @@ import sys
 import shutil
 import subprocess
 
+
 def check_prompt_toolkit():
     try:
         import prompt_toolkit
         return True
     except ImportError:
         return False
+
 
 def get_user_input(question):
     while True:
@@ -18,17 +20,21 @@ def get_user_input(question):
         else:
             print("Invalid input. Please enter 'y' or 'n'.")
 
+
 def install_prompt_toolkit():
     subprocess.check_call([sys.executable, "-m", "pip", "install", "prompt_toolkit"])
+
 
 def copy_files(src_dir, dst_dir):
     if os.path.exists(dst_dir):
         shutil.rmtree(dst_dir)
     shutil.copytree(src_dir, dst_dir)
 
+
 def add_alias(alias, file_path):
     with open(file_path, 'a') as file:
         file.write(f'\n{alias}\n')
+
 
 def main():
     if sys.platform == 'win32':
@@ -51,12 +57,14 @@ def main():
             print("prompt_toolkit is required. Exiting.")
             return
 
-    if get_user_input("Do you want to copy the dev tool home directory and overwrite all in the destination directory?"):
+    if get_user_input(
+            "Do you want to copy the dev tool home directory and overwrite all in the destination directory?"):
         copy_files('DevTools', os.path.join(apertia_dir, 'DevTools'))
         shutil.copy('apertia-tool.py', apertia_dir)
 
     if get_user_input("Do you want to add the alias to the bashrc file?"):
         add_alias(alias, bashrc_path)
+
 
 if __name__ == '__main__':
     main()
