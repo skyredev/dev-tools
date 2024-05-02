@@ -13,6 +13,14 @@ class Base:
 
     }
 
+    availableOptionsForTranslate = {
+
+    }
+
+    availableOptionsAvailableValues = {
+
+    }
+
     availableOptions = {
 
     }
