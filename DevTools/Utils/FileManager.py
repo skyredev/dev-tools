@@ -7,6 +7,7 @@ class FileManager:
     def __init__(self, TerminalManager, TemplateManager):
         self.TerminalManager = TerminalManager
         self.TemplateManager = TemplateManager
+        self.resources_dir = os.path.join(os.path.dirname(__file__), '../../src/backend/Resources')
 
     @staticmethod
     def create_directory(directory):
@@ -71,7 +72,8 @@ class FileManager:
         if extension == 'folder':
             if exclude is None:
                 exclude = ['__init__.py']
-            folder_names = [folder for folder in os.listdir(directory) if os.path.isdir(os.path.join(directory, folder)) and folder not in exclude]
+            folder_names = [folder for folder in os.listdir(directory) if
+                            os.path.isdir(os.path.join(directory, folder)) and folder not in exclude]
             return folder_names
 
         else:
@@ -84,3 +86,20 @@ class FileManager:
             file_names = [filename.split('.')[0] for filename in os.listdir(directory) if
                           filename.endswith(extension) and filename not in exclude]
             return file_names
+
+    def get_entity_defs_path(self, entity_name):
+        return os.path.join(self.resources_dir, f"metadata/entityDefs/{entity_name}.json")
+
+    def get_scopes_path(self, entity_name):
+        return os.path.join(self.resources_dir, f"metadata/scopes/{entity_name}.json")
+
+    def get_record_defs_path(self, entity_name):
+        return os.path.join(self.resources_dir, f"metadata/recordDefs/{entity_name}.json")
+
+    def get_client_defs_path(self, entity_name):
+        return os.path.join(self.resources_dir, f"metadata/clientDefs/{entity_name}.json")
+
+    def get_i18n_path(self, entity_name, language_code):
+        if language_code is None:
+            return os.path.join(self.resources_dir, "i18n")
+        return os.path.join(self.resources_dir, f"i18n/{language_code}/{entity_name}.json")

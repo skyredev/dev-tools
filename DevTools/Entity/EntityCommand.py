@@ -27,7 +27,7 @@ class EntityCommand(BaseCommand):
     def run(self):
         module = self.get_module()
         entity_name = self.get_entity_name()
-        entity_file_path = self.get_entity_file_path(entity_name)
+        entity_file_path = self.FileManager.get_entity_defs_path(entity_name)
 
         if os.path.exists(entity_file_path):
             self.ModifyEntity.modify(entity_file_path, entity_name)
@@ -46,6 +46,3 @@ class EntityCommand(BaseCommand):
             else:
                 self.FileManager.ensure_json_exists(entity_file_path)
                 self.ModifyEntity.modify(entity_file_path, entity_name)
-
-    def get_entity_file_path(self, entity_name):
-        return os.path.join(self.current_dir, f"src/backend/Resources/metadata/entityDefs/{entity_name}.json")

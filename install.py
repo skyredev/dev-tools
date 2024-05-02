@@ -37,17 +37,17 @@ def add_alias(alias, file_path):
 
 
 def main():
-    if sys.platform == 'win32':
-        username = os.getenv('USERNAME')
-        home_dir = os.path.join('C:\\Users', username)
-        bashrc_path = os.path.join(home_dir, '.bashrc')
-    else:
-        username = os.getenv('USER')
-        home_dir = os.path.expanduser('~')
-        bashrc_path = os.path.join(home_dir, '.bashrc')
-
+    home_dir = os.path.expanduser('~')
     apertia_dir = os.path.join(home_dir, '.apertia', 'apertia-tool')
-    alias = f'alias apertia-tool="python {os.path.join(apertia_dir, "apertia-tool.py")}"'
+    apertia_tool_path = os.path.join(apertia_dir, "apertia-tool.py")
+    apertia_tool_path = apertia_tool_path.replace('\\', '/')
+
+    if sys.platform == 'win32':
+        alias = f'alias apertia-tool="winpty python \\"{apertia_tool_path}\\""'
+    else:
+        alias = f'alias apertia-tool="python \\"{apertia_tool_path}\\""'
+
+    bashrc_path = os.path.join(home_dir, '.bashrc')
 
     if not check_prompt_toolkit():
         print("prompt_toolkit is not installed.")
@@ -64,6 +64,11 @@ def main():
 
     if get_user_input("Do you want to add the alias to the bashrc file?"):
         add_alias(alias, bashrc_path)
+
+    if sys.platform == 'win32' and get_user_input("Do you want to add the alias to the PowerShell profile?"):
+        profile_path = os.path.join(home_dir, 'Documents', 'WindowsPowerShell', 'Microsoft.PowerShell_profile.ps1')
+        powershell_alias = f"function apertia-tool {{ python '{apertia_tool_path}' }}"
+        add_alias(powershell_alias, profile_path)
 
 
 if __name__ == '__main__':

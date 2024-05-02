@@ -24,15 +24,12 @@ class CreateEntity(BaseCommand):
 
     def get_paths(self, entity_name):
         return {
-            "scopes": os.path.join(self.current_dir, f"src/backend/Resources/metadata/scopes/{entity_name}.json"),
-            "entityDefs": os.path.join(self.current_dir,
-                                       f"src/backend/Resources/metadata/entityDefs/{entity_name}.json"),
-            "recordDefs": os.path.join(self.current_dir,
-                                       f"src/backend/Resources/metadata/recordDefs/{entity_name}.json"),
-            "clientDefs": os.path.join(self.current_dir,
-                                       f"src/backend/Resources/metadata/clientDefs/{entity_name}.json"),
-            "i18n_cs_CZ": os.path.join(self.current_dir, f"src/backend/Resources/i18n/cs_CZ/{entity_name}.json"),
-            "i18n_en_US": os.path.join(self.current_dir, f"src/backend/Resources/i18n/en_US/{entity_name}.json")
+            "scopes":     self.FileManager.get_scopes_path(entity_name),
+            "entityDefs": self.FileManager.get_entity_defs_path(entity_name),
+            "recordDefs": self.FileManager.get_record_defs_path(entity_name),
+            "clientDefs": self.FileManager.get_client_defs_path(entity_name),
+            "i18n_cs_CZ": self.FileManager.get_i18n_path(entity_name, "cs_CZ"),
+            "i18n_en_US": self.FileManager.get_i18n_path(entity_name, "en_US")
         }
 
     def get_templates(self, entity_type, entity_name, module, ENTITY_DEFS_TEMPLATES):

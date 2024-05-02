@@ -68,7 +68,7 @@ class ButtonCommand(BaseCommand):
                 module, entity, label, converted_name, name, style, view)
         )
 
-        json_dir = os.path.join(self.current_dir, f"src/backend/Resources/metadata/clientDefs/{entity}.json")
+        json_dir = self.FileManager.get_client_defs_path(entity)
         merged_json = self.FileManager.merge_json_file(json_dir, json_populated_template)
         self.FileManager.write_file(json_dir, merged_json)
 

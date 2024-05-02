@@ -50,10 +50,9 @@ class ModifyEntity(BaseCommand):
                     break
 
     def add_values(self, filepath, section_path, entity_name):
-        default_translation_filepath = self.FileManager.ensure_json_exists(os.path.join(self.current_dir,
-                                                                                        f"src/backend/Resources/i18n/en_US/{entity_name}.json"))
+        default_translation_filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, 'en_US'))
 
-        other_languages = self.FileManager.get_file_names(os.path.join(self.current_dir, "src/backend/Resources/i18n"), extension='folder', exclude=['en_US'])
+        other_languages = self.FileManager.get_file_names(self.FileManager.get_i18n_path(), extension='folder', exclude=['en_US'])
 
         selectedValue = ""
         if section_path[0] == 'fields':
@@ -117,8 +116,8 @@ class ModifyEntity(BaseCommand):
                     validator=self.Validators.ChoiceValidator(self.YES_NO)
                 )
                 if add_translation == "Yes":
-                    translation_filepath = self.FileManager.ensure_json_exists(os.path.join(self.current_dir,
-                                                                                            f"src/backend/Resources/i18n/{language}/{entity_name}.json"))
+                    translation_filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, language))
+
                     translation = self.TerminalManager.get_user_input(
                         f"Enter the translation for label '{label}' in {language}")
                     self.MetadataManager.set(section_path, value_name, translation, translation_filepath)
@@ -131,8 +130,7 @@ class ModifyEntity(BaseCommand):
                         validator=self.Validators.ChoiceValidator(self.YES_NO)
                     )
                     if add_translation == "Yes":
-                        translation_filepath = self.FileManager.ensure_json_exists(os.path.join(self.current_dir,
-                                                                                                f"src/backend/Resources/i18n/{language}/{entity_name}.json"))
+                        translation_filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, language))
 
                         translation = self.TerminalManager.get_user_input(
                             f"Enter the translation for tooltip '{tooltip}' in {language}")
@@ -215,10 +213,9 @@ class ModifyEntity(BaseCommand):
             if confirm == "Yes":
                 self.MetadataManager.delete(section_path, field_choice, filepath)
 
-                language_files = self.FileManager.get_file_names(os.path.join(self.current_dir, "src/backend/Resources/i18n"), extension='folder')
+                language_files = self.FileManager.get_file_names(self.FileManager.get_i18n_path(), extension='folder')
                 for language in language_files:
-                    translation_filepath = self.FileManager.ensure_json_exists(os.path.join(self.current_dir,
-                                                                                            f"src/backend/Resources/i18n/{language}/{entity_name}.json"))
+                    translation_filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, language))
                     self.MetadataManager.delete(section_path, field_choice, translation_filepath)
 
                     self.MetadataManager.delete(['tooltips'], field_choice, translation_filepath)
@@ -227,7 +224,7 @@ class ModifyEntity(BaseCommand):
                 print(self.colorization('yellow', f"'{field_choice}' was not deleted"))
 
     def translate_values(self, entity_name):
-        languages = self.FileManager.get_file_names(os.path.join(self.current_dir, "src/backend/Resources/i18n"), extension='folder')
+        languages = self.FileManager.get_file_names(self.FileManager.get_i18n_path(), extension='folder')
 
         if len(languages) < 2:
             print(self.colorization('red', "There are not enough languages to translate to. (At least 2 are required)"))
@@ -260,10 +257,9 @@ class ModifyEntity(BaseCommand):
             else:
                 print(self.colorization('red', "You can't translate to the same language."))
 
-        filepath = self.FileManager.ensure_json_exists(os.path.join(self.current_dir,
-                                                                    f"src/backend/Resources/i18n/{opposite_language}/{entity_name}.json"))
-        translation_filepath = self.FileManager.ensure_json_exists(os.path.join(self.current_dir,
-                                                                                f"src/backend/Resources/i18n/{language}/{entity_name}.json"))
+        filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, opposite_language))
+
+        translation_filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, language))
 
         print(self.colorization('green', f"Translating '{entity_name}' from {opposite_language} to {language}"))
 
