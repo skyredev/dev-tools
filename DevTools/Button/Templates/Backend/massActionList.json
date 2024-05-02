@@ -1,5 +1,5 @@
 {
-    "massActionList.json": [
+    "massActionList": [
         "__APPEND__",
         "{ButtonNamePlaceholder}"
     ],
@@ -10,7 +10,8 @@
     "massActionDefs": {
         "{ButtonNamePlaceholder}": {
             "handler": "{ModuleNamePlaceholder}:handlers/{EntityNamePlaceholder}/{ButtonNamePlaceholder}-handler",
-            "initFunction": "init{FunctionNamePlaceholder}"
+            "initFunction": "init{FunctionNamePlaceholder}",
+            "actionFunction": "action{FunctionNamePlaceholder}"
         }
     }
 }
