@@ -12,6 +12,22 @@ def check_prompt_toolkit():
         return False
 
 
+def check_paramiko():
+    try:
+        import paramiko
+        return True
+    except ImportError:
+        return False
+
+
+def check_dotenv():
+    try:
+        import dotenv
+        return True
+    except ImportError:
+        return False
+
+
 def get_user_input(question):
     while True:
         user_input = input(question + " (y/n): ").lower()
@@ -21,8 +37,8 @@ def get_user_input(question):
             print("Invalid input. Please enter 'y' or 'n'.")
 
 
-def install_prompt_toolkit():
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "prompt_toolkit"])
+def install_package(package_name):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
 
 
 def copy_files(src_dir, dst_dir):
@@ -52,9 +68,25 @@ def main():
     if not check_prompt_toolkit():
         print("prompt_toolkit is not installed.")
         if get_user_input("Do you want to install prompt_toolkit?"):
-            install_prompt_toolkit()
+            install_package("prompt_toolkit")
         else:
             print("prompt_toolkit is required. Exiting.")
+            return
+
+    if not check_paramiko():
+        print("paramiko is not installed.")
+        if get_user_input("Do you want to install paramiko?"):
+            install_package("paramiko")
+        else:
+            print("paramiko is required. Exiting.")
+            return
+
+    if not check_dotenv():
+        print("dotenv is not installed.")
+        if get_user_input("Do you want to install dotenv?"):
+            install_package("python-dotenv")
+        else:
+            print("dotenv is required. Exiting.")
             return
 
     if get_user_input(
@@ -73,3 +105,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    print("Installation completed.")

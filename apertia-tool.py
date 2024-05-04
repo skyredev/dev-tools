@@ -27,6 +27,7 @@ def main():
     hook_Command = HookCommand()
     entity_Command = EntityCommand()
     baseCommand = BaseCommand(__file__)
+    baseCommand.cache_entities()
 
     while True:
         print("")

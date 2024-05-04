@@ -49,23 +49,26 @@ class ButtonCommand(BaseCommand):
         converted_name = self.TerminalManager.get_converted_name(name)
         label = self.TerminalManager.get_user_input("Enter the button label", default=name)
 
-        style = self.TerminalManager.get_choice_with_autocomplete(
-            "Start typing the button style: ",
-            self.BUTTON_STYLES,
-            validator=self.Validators.ChoiceValidator(self.BUTTON_STYLES)
-        )
+        if button_type != "mass-action" and button_type != "dropdown":
+            style = self.TerminalManager.get_choice_with_autocomplete(
+                "Start typing the button style: ",
+                self.BUTTON_STYLES,
+                validator=self.Validators.ChoiceValidator(self.BUTTON_STYLES)
+            )
+        else:
+            style = None
 
         json_populated_template = self.TemplateManager.set_template_values(
             self.FileManager.read_file(
                 os.path.join(self.script_path, "Templates/Backend/" + self.get_json_template(view, button_type))),
             self.generate_template_values(
-                module, entity, label, converted_name, name, style, view)
+                module, entity, label, converted_name, name, view, style)
         )
         js_populated_template = self.TemplateManager.set_template_values(
             self.FileManager.read_file(
                     os.path.join(self.script_path, "Templates/Frontend/" + self.get_js_template(view, button_type))),
             self.generate_template_values(
-                module, entity, label, converted_name, name, style, view)
+                module, entity, label, converted_name, name, view, style)
         )
 
         json_dir = self.FileManager.get_client_defs_path(entity)
@@ -78,6 +81,8 @@ class ButtonCommand(BaseCommand):
             print(f"Error: JS file already exists: {js_dir}")
             return
 
+        if button_type == "mass-action":
+            self.FileManager.add_translations(entity, ["massActions"], converted_name, label)
         self.FileManager.write_file(js_dir, js_populated_template)
 
     @staticmethod
@@ -94,7 +99,7 @@ class ButtonCommand(BaseCommand):
             return "mass_action.js"
         return "button.js"
 
-    def generate_template_values(self, module, entity, label, converted_name, name, style, view):
+    def generate_template_values(self, module, entity, label, converted_name, name, view, style=None):
         return {
             "{ModuleNamePlaceholder}": module,
             "{EntityNamePlaceholder}": entity,

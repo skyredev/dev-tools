@@ -4,10 +4,17 @@ import json
 
 class FileManager:
 
-    def __init__(self, TerminalManager, TemplateManager):
+    def __init__(self, TerminalManager, TemplateManager, MetadataManager, Validators):
         self.TerminalManager = TerminalManager
         self.TemplateManager = TemplateManager
+        self.MetadataManager = MetadataManager
+        self.Validators = Validators
         self.resources_dir = os.path.join(os.path.dirname(__file__), '../../src/backend/Resources')
+
+    YES_NO = [
+        "Yes",
+        "No"
+    ]
 
     @staticmethod
     def create_directory(directory):
@@ -99,7 +106,27 @@ class FileManager:
     def get_client_defs_path(self, entity_name):
         return os.path.join(self.resources_dir, f"metadata/clientDefs/{entity_name}.json")
 
-    def get_i18n_path(self, entity_name, language_code):
+    def get_i18n_path(self, entity_name=None, language_code=None):
         if language_code is None:
             return os.path.join(self.resources_dir, "i18n")
         return os.path.join(self.resources_dir, f"i18n/{language_code}/{entity_name}.json")
+
+    def add_translations(self, entity_name, section_path, key, default_value):
+        default_translation_filepath = self.ensure_json_exists(self.get_i18n_path(entity_name, 'en_US'))
+
+        other_languages = self.get_file_names(self.get_i18n_path(), extension='folder', exclude=['en_US'])
+
+        self.MetadataManager.set(section_path, key, default_value, default_translation_filepath)
+        for language in other_languages:
+            add_translation = self.TerminalManager.get_choice_with_autocomplete(
+                f"Would you like to set a translation for {'>'.join(section_path)}>{key} in {language}? ",
+                self.YES_NO,
+                validator=self.Validators.ChoiceValidator(self.YES_NO)
+            )
+            if add_translation == "Yes":
+                translation_filepath = self.ensure_json_exists(
+                    self.get_i18n_path(entity_name, language))
+
+                translation = self.TerminalManager.get_user_input(
+                    f"Enter the translation for {'>'.join(section_path)}>{key} in {language}")
+                self.MetadataManager.set(section_path, key, translation, translation_filepath)

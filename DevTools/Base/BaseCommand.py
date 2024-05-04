@@ -6,6 +6,7 @@ from DevTools.Utils.TerminalManager import TerminalManager
 from DevTools.Utils.FileManager import FileManager
 from DevTools.Utils.TemplateManager import TemplateManager
 from DevTools.Utils.MetadataManager import MetadataManager
+from DevTools.Utils.CacheManager import CacheManager
 
 
 class BaseCommand:
@@ -17,7 +18,8 @@ class BaseCommand:
         self.TerminalManager = TerminalManager(self.Validators)
         self.TemplateManager = TemplateManager()
         self.MetadataManager = MetadataManager()
-        self.FileManager = FileManager(self.TerminalManager, self.TemplateManager)
+        self.FileManager = FileManager(self.TerminalManager, self.TemplateManager, self.MetadataManager, self.Validators)
+        self.CacheManager = CacheManager(self.FileManager)
         self.entity_defs_dir = os.path.join(self.current_dir, "src/backend/Resources/metadata/entityDefs")
         self.package_json_dir = os.path.join(self.current_dir, "package.json")
 
@@ -33,11 +35,18 @@ class BaseCommand:
             "Enter the module name", self.Validators.empty_string_validator, default=self.get_module_suggestion())
         return module
 
+    def cache_entities(self):
+        instance_entities = self.CacheManager.get_instance_file_names("custom/Espo/Custom/Resources/metadata/entityDefs")
+        local_entities = self.FileManager.get_file_names(self.entity_defs_dir, ".json")
+        all_entities = instance_entities + local_entities
+        content = {"instance": instance_entities, "local": local_entities, "all": all_entities}
+        self.FileManager.write_file(os.path.join(self.current_dir, "cache/entities.json"), content)
+
     def get_entity_name(self):
+        all_entities = self.MetadataManager.get("cache/entities.json", ['all'])
+        print(all_entities)
         entity = self.TerminalManager.get_choice_with_autocomplete(
-            "Enter the entity name: ", self.FileManager.get_file_names(
-                self.entity_defs_dir, ".json"
-            ), send_choices=False, validator=self.Validators.entity_validator)
+            "Enter the entity name: ", all_entities, send_choices=False, validator=self.Validators.entity_validator)
         return entity
 
     @staticmethod

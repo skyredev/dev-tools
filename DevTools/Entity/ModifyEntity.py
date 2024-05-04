@@ -50,9 +50,6 @@ class ModifyEntity(BaseCommand):
                     break
 
     def add_values(self, filepath, section_path, entity_name):
-        default_translation_filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, 'en_US'))
-
-        other_languages = self.FileManager.get_file_names(self.FileManager.get_i18n_path(), extension='folder', exclude=['en_US'])
 
         selectedValue = ""
         if section_path[0] == 'fields':
@@ -108,33 +105,9 @@ class ModifyEntity(BaseCommand):
 
             self.MetadataManager.set(section_path, value_name, field_data, filepath)
 
-            self.MetadataManager.set(section_path, value_name, label, default_translation_filepath)
-            for language in other_languages:
-                add_translation = self.TerminalManager.get_choice_with_autocomplete(
-                    f"Would you like to set a translation for label '{label}' in {language}? ",
-                    self.YES_NO,
-                    validator=self.Validators.ChoiceValidator(self.YES_NO)
-                )
-                if add_translation == "Yes":
-                    translation_filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, language))
-
-                    translation = self.TerminalManager.get_user_input(
-                        f"Enter the translation for label '{label}' in {language}")
-                    self.MetadataManager.set(section_path, value_name, translation, translation_filepath)
+            self.FileManager.add_translations(entity_name, section_path, value_name, label)
             if tooltip != "None":
-                self.MetadataManager.set(['tooltips'], value_name, tooltip, default_translation_filepath)
-                for language in other_languages:
-                    add_translation = self.TerminalManager.get_choice_with_autocomplete(
-                        f"Would you like to set a translation for tooltip '{tooltip}' in {language}? ",
-                        self.YES_NO,
-                        validator=self.Validators.ChoiceValidator(self.YES_NO)
-                    )
-                    if add_translation == "Yes":
-                        translation_filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, language))
-
-                        translation = self.TerminalManager.get_user_input(
-                            f"Enter the translation for tooltip '{tooltip}' in {language}")
-                        self.MetadataManager.set(['tooltips'], value_name, translation, translation_filepath)
+                self.FileManager.add_translations(entity_name, ['tooltips'], value_name, tooltip)
 
     def get_available_values(self, section_path):
         if section_path[0] == 'fields':
@@ -215,7 +188,8 @@ class ModifyEntity(BaseCommand):
 
                 language_files = self.FileManager.get_file_names(self.FileManager.get_i18n_path(), extension='folder')
                 for language in language_files:
-                    translation_filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, language))
+                    translation_filepath = self.FileManager.ensure_json_exists(
+                        self.FileManager.get_i18n_path(entity_name, language))
                     self.MetadataManager.delete(section_path, field_choice, translation_filepath)
 
                     self.MetadataManager.delete(['tooltips'], field_choice, translation_filepath)
@@ -259,7 +233,8 @@ class ModifyEntity(BaseCommand):
 
         filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, opposite_language))
 
-        translation_filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, language))
+        translation_filepath = self.FileManager.ensure_json_exists(
+            self.FileManager.get_i18n_path(entity_name, language))
 
         print(self.colorization('green', f"Translating '{entity_name}' from {opposite_language} to {language}"))
 

@@ -3,7 +3,12 @@ import json
 
 class MetadataManager:
     @staticmethod
-    def get(filepath):
+    def get(filepath, section_path=None):
+        if section_path:
+            data = MetadataManager.get(filepath)
+            for section in section_path:
+                data = data.get(section, {})
+            return data
         with open(filepath, 'r', encoding='utf-8') as file:
             return json.load(file)
 
