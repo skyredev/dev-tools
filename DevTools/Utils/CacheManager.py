@@ -30,13 +30,49 @@ class CacheManager:
         stdin, stdout, stderr = self.ssh_client.exec_command(command)
         return stdout.read().decode('utf-8')
 
-    def get_instance_file_names(self, directory):
-        command = f'ls ~/public_html/{directory}'  # Pass directory starting after public_html without / (e.g. 'custom/Espo...')
+    def get_instance_file_names(self, directory, return_type='files'):
+        command = f'ls -l ~/public_html/{directory}'
         output = self.execute_command(command)
-        file_names = [name.strip('.json\n') for name in output.split()]
-        return file_names
+        lines = output.strip().split('\n')
+        items = []
 
-    def get_instance_file(self, directory, file_name):
-        command = f'cat ~/public_html/{directory}/{file_name}.json'
+        for line in lines:
+            parts = line.split()
+            if len(parts) > 0:
+                type_and_permissions = parts[0]
+                name = parts[-1]
+                if type_and_permissions[0] == 'd' and return_type == 'directories':
+                    items.append(name)
+                elif type_and_permissions[0] == '-' and return_type == 'files':
+                    file_name, file_extension = os.path.splitext(name)
+                    items.append((directory, file_name, file_extension))
+
+        return items
+
+    @staticmethod
+    def get_local_file_names(directory, return_type='files'):
+        items = []
+        if "*" in directory:
+            base_dir = directory.replace("/*", "")
+            for root, dirs, files in os.walk(base_dir):
+                for file in files:
+                    file_name, file_extension = os.path.splitext(file)
+                    items.append((root, file_name, file_extension))
+        else:
+            for root, dirs, files in os.walk(directory):
+                for file in files:
+                    file_name, file_extension = os.path.splitext(file)
+                    if return_type == 'files':
+                        items.append((root, file_name, file_extension))
+                    elif return_type == 'directories':
+                        items.append(root)
+        return items
+
+    def get_instance_file(self, file_directory, file_name):
+        command = f'cat ~/public_html/{file_directory}/{file_name}'
+        print(command)
         output = self.execute_command(command)
-        return json.loads(output)
+        if file_name.endswith('.json'):
+            return json.loads(output)
+        else:
+            return output

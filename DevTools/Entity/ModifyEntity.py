@@ -28,7 +28,7 @@ class ModifyEntity(BaseCommand):
     def __init__(self):
         super().__init__(command_file=__file__)
 
-    def modify(self, filepath, entity_name):
+    def modify(self, filepath, cache_path, entity_name):
         while True:
             choice = self.TerminalManager.get_choice_with_autocomplete(
                 f"Entity '{entity_name}' already exists. What would you like to do? ",
@@ -37,11 +37,11 @@ class ModifyEntity(BaseCommand):
             )
             match choice:
                 case "Add Field":
-                    self.add_values(filepath, ['fields'], entity_name)
+                    self.add_values(filepath, ['fields'], cache_path, entity_name)
                 case "Delete Field":
                     self.delete_keys(filepath, ['fields'], entity_name)
                 case "Add Link":
-                    self.add_values(filepath, ['links'], entity_name)
+                    self.add_values(filepath, ['links'], cache_path, entity_name)
                 case "Delete Link":
                     self.delete_keys(filepath, ['links'], entity_name)
                 case "Translate Value":
@@ -49,7 +49,8 @@ class ModifyEntity(BaseCommand):
                 case "Exit":
                     break
 
-    def add_values(self, filepath, section_path, entity_name):
+    def add_values(self, filepath, section_path, cache_path, entity_name):
+        self.FileManager.ensure_json_exists(filepath)
 
         selectedValue = ""
         if section_path[0] == 'fields':
@@ -63,14 +64,24 @@ class ModifyEntity(BaseCommand):
                 f"Start typing a {selectedValue} type you want to add or 'Exit' to finish: ",
                 values, validator=self.Validators.ChoiceValidator(values)
             )
+            existing_values_cache = self.MetadataManager.list(section_path, cache_path) if os.path.exists(cache_path) else []
+            existing_values_local = self.MetadataManager.list(section_path, filepath) if os.path.exists(filepath) else []
+            existing_values = existing_values_cache + existing_values_local
 
             if value_type == 'Exit':
                 break
+            while True:
+                value_name = self.TerminalManager.get_converted_field_name(
+                    self.TerminalManager.get_user_input(f"Enter the name for the new {selectedValue}",
+                                                        validator=self.Validators.empty_string_validator),
+                    selectedValue.capitalize())
+                if value_name in existing_values:
+                    print(self.colorization('red',
+                                            f"Field '{value_name}' already exists. Please choose a different name."))
+                    continue
+                else:
+                    break
 
-            value_name = self.TerminalManager.get_converted_field_name(
-                self.TerminalManager.get_user_input(f"Enter the name for the new {selectedValue}",
-                                                    validator=self.Validators.empty_string_validator),
-                selectedValue.capitalize())
             label = self.TerminalManager.get_user_input("Enter the label for the new field",
                                                         default=value_name[0].upper() + value_name[1:])
 

@@ -4,11 +4,12 @@ import json
 
 class FileManager:
 
-    def __init__(self, TerminalManager, TemplateManager, MetadataManager, Validators):
+    def __init__(self, TerminalManager, TemplateManager, MetadataManager, Validators, cache_path):
         self.TerminalManager = TerminalManager
         self.TemplateManager = TemplateManager
         self.MetadataManager = MetadataManager
         self.Validators = Validators
+        self.cache_path = cache_path
         self.resources_dir = os.path.join(os.path.dirname(__file__), '../../src/backend/Resources')
 
     YES_NO = [
@@ -33,10 +34,20 @@ class FileManager:
                 if isinstance(value, dict):
                     merged_json[key] = self.merge_json(merged_json[key], value)
                 elif isinstance(value, list):
-                    if value[0] == "__APPEND__":
-                        merged_json[key].extend(value[1:])
+                    if value and value[0] == "__APPEND__":
+                        existing_items = {json.dumps(item, sort_keys=True) for item in merged_json[key]}
+                        for item in value[1:]:
+                            item_json = json.dumps(item, sort_keys=True)
+                            if item_json not in existing_items:
+                                merged_json[key].append(item)
+                                existing_items.add(item_json)
                     else:
-                        merged_json[key] = value
+                        existing_items = {json.dumps(item, sort_keys=True) for item in merged_json[key]}
+                        for item in value:
+                            item_json = json.dumps(item, sort_keys=True)
+                            if item_json not in existing_items:
+                                merged_json[key].append(item)
+                                existing_items.add(item_json)
                 else:
                     merged_json[key] = value
             else:
@@ -93,6 +104,9 @@ class FileManager:
             file_names = [filename.split('.')[0] for filename in os.listdir(directory) if
                           filename.endswith(extension) and filename not in exclude]
             return file_names
+
+    def get_entity_defs_cache_path(self, entity_name):
+        return os.path.join(self.cache_path, f"entityDefs/{entity_name}.json")
 
     def get_entity_defs_path(self, entity_name):
         return os.path.join(self.resources_dir, f"metadata/entityDefs/{entity_name}.json")

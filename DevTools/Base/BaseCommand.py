@@ -12,16 +12,23 @@ from DevTools.Utils.CacheManager import CacheManager
 class BaseCommand:
 
     def __init__(self, command_file):
+
+        ## PATHS ##
         self.current_dir = os.getcwd()
         self.script_path = os.path.dirname(os.path.abspath(command_file))
+        self.entity_defs_dir = os.path.join(self.current_dir, "src/backend/Resources/metadata/entityDefs")
+        self.i18n_dir = os.path.join(self.current_dir, "src/backend/Resources/i18n")
+        self.controllers_dir = os.path.join(self.current_dir, "src/backend/Controllers")
+        self.cache_path = os.path.join(self.current_dir, "apertia-tool/cache")
+        self.package_json_dir = os.path.join(self.current_dir, "package.json")
+
+        ## UTILS ##
         self.Validators = Validators()
         self.TerminalManager = TerminalManager(self.Validators)
         self.TemplateManager = TemplateManager()
         self.MetadataManager = MetadataManager()
-        self.FileManager = FileManager(self.TerminalManager, self.TemplateManager, self.MetadataManager, self.Validators)
+        self.FileManager = FileManager(self.TerminalManager, self.TemplateManager, self.MetadataManager, self.Validators, self.cache_path)
         self.CacheManager = CacheManager(self.FileManager)
-        self.entity_defs_dir = os.path.join(self.current_dir, "src/backend/Resources/metadata/entityDefs")
-        self.package_json_dir = os.path.join(self.current_dir, "package.json")
 
     def get_module_suggestion(self):
         if os.path.isfile(self.package_json_dir):
@@ -35,18 +42,10 @@ class BaseCommand:
             "Enter the module name", self.Validators.empty_string_validator, default=self.get_module_suggestion())
         return module
 
-    def cache_entities(self):
-        instance_entities = self.CacheManager.get_instance_file_names("custom/Espo/Custom/Resources/metadata/entityDefs")
-        local_entities = self.FileManager.get_file_names(self.entity_defs_dir, ".json")
-        all_entities = instance_entities + local_entities
-        content = {"instance": instance_entities, "local": local_entities, "all": all_entities}
-        self.FileManager.write_file(os.path.join(self.current_dir, "cache/entities.json"), content)
-
     def get_entity_name(self):
-        all_entities = self.MetadataManager.get("cache/entities.json", ['all'])
-        print(all_entities)
+        entities = self.FileManager.get_file_names(os.path.join(self.cache_path, "entityDefs"), ".json")
         entity = self.TerminalManager.get_choice_with_autocomplete(
-            "Enter the entity name: ", all_entities, send_choices=False, validator=self.Validators.entity_validator)
+            "Enter the entity name: ", entities, validator=self.Validators.entity_validator, send_choices=False)
         return entity
 
     @staticmethod
