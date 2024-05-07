@@ -7,10 +7,11 @@ from dotenv import load_dotenv
 class CacheManager:
 
     def __init__(self, FileManager):
-        load_dotenv()
+        load_dotenv(dotenv_path=os.path.join(os.getcwd(), '.env'))
         self.hostname = os.getenv('SSH_HOST')
         self.username = os.getenv('SSH_USER')
         self.password = os.getenv('SSH_PASSWORD')
+        self.ssh_key_path = os.getenv('SSH_KEY_PATH')
         self.ssh_client = None
         self.FileManager = FileManager
 
@@ -18,7 +19,9 @@ class CacheManager:
         if self.ssh_client is None:
             self.ssh_client = paramiko.SSHClient()
             self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.ssh_client.connect(self.hostname, username=self.username, password=self.password)
+            self.ssh_client.connect(
+                self.hostname, username=self.username,password=self.password,key_filename=self.ssh_key_path
+            )
 
     def disconnect(self):
         if self.ssh_client:
