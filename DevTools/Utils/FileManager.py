@@ -4,12 +4,14 @@ import json
 
 class FileManager:
 
-    def __init__(self, TerminalManager, TemplateManager, MetadataManager, Validators, cache_path):
+    def __init__(self, TerminalManager, TemplateManager, MetadataManager, Validators, cache_path, languages, default_language):
         self.TerminalManager = TerminalManager
         self.TemplateManager = TemplateManager
         self.MetadataManager = MetadataManager
         self.Validators = Validators
         self.cache_path = cache_path
+        self.languages = languages
+        self.default_language = default_language
         self.resources_dir = os.path.join(os.path.dirname(__file__), '../../src/backend/Resources')
 
     YES_NO = [
@@ -22,9 +24,12 @@ class FileManager:
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-    def ensure_json_exists(self, file_path):
+    def ensure_file_exists(self, file_path):
         if not os.path.exists(file_path):
-            self.write_file(file_path, '{}')
+            if file_path.endswith('.json'):
+                self.write_file(file_path, '{}')
+            else:
+                self.write_file(file_path, '')
         return file_path
 
     def merge_json(self, existing_json, new_json):
@@ -65,6 +70,7 @@ class FileManager:
     @staticmethod
     def read_file(source_path):
         # Load file from path_to_template
+        print("Reading file", source_path)
         try:
             with open(source_path, 'r', encoding='utf-8') as file:
                 content = json.load(file)
@@ -74,6 +80,8 @@ class FileManager:
         return content
 
     def write_file(self, destination_path, content):
+        file_exists = os.path.isfile(destination_path)
+
         self.create_directory(os.path.dirname(destination_path))
 
         if isinstance(content, str):
@@ -83,7 +91,10 @@ class FileManager:
             with open(destination_path, 'w', encoding='utf-8') as file:
                 json.dump(content, file, indent=2, ensure_ascii=False)
 
-        print(f"File created/updated: {destination_path}")
+        if file_exists:
+            print(f"File updated: {destination_path}")
+        else:
+            print(f"File created: {destination_path}")
 
     @staticmethod
     def get_file_names(directory, extension='.py', exclude=None):
@@ -126,9 +137,10 @@ class FileManager:
         return os.path.join(self.resources_dir, f"i18n/{language_code}/{entity_name}.json")
 
     def add_translations(self, entity_name, section_path, key, default_value):
-        default_translation_filepath = self.ensure_json_exists(self.get_i18n_path(entity_name, 'en_US'))
+        default_translation_filepath = self.ensure_file_exists(self.get_i18n_path(entity_name, self.default_language))
 
-        other_languages = self.get_file_names(self.get_i18n_path(), extension='folder', exclude=['en_US'])
+        other_languages = self.languages.copy()
+        other_languages.remove(self.default_language)
 
         self.MetadataManager.set(section_path, key, default_value, default_translation_filepath)
         for language in other_languages:
@@ -138,7 +150,7 @@ class FileManager:
                 validator=self.Validators.ChoiceValidator(self.YES_NO)
             )
             if add_translation == "Yes":
-                translation_filepath = self.ensure_json_exists(
+                translation_filepath = self.ensure_file_exists(
                     self.get_i18n_path(entity_name, language))
 
                 translation = self.TerminalManager.get_user_input(

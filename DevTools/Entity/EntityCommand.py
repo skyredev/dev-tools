@@ -28,10 +28,9 @@ class EntityCommand(BaseCommand):
         module = self.get_module()
         entity_name = self.get_entity_name()
         entity_file_path = self.FileManager.get_entity_defs_path(entity_name)
-        entity_cache_path = self.FileManager.get_entity_defs_cache_path(entity_name)
 
-        if os.path.exists(entity_cache_path):
-            self.ModifyEntity.modify(entity_file_path, entity_cache_path, entity_name)
+        if entity_name in [entity[1] for entity in self.entities]:
+            self.ModifyEntity.modify(entity_file_path, entity_name, self.entities)
         else:
             action = self.TerminalManager.get_choice_with_autocomplete(
                 "What would you like to do with the entity? ",
@@ -45,5 +44,5 @@ class EntityCommand(BaseCommand):
 
                 self.CreateEntity.create(module, entity_name, entity_type)
             else:
-                self.FileManager.ensure_json_exists(entity_file_path)
-                self.ModifyEntity.modify(entity_file_path, entity_cache_path, entity_name)
+                self.FileManager.ensure_file_exists(entity_file_path)
+                self.ModifyEntity.modify(entity_file_path, entity_name, self.entities)

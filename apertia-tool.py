@@ -9,7 +9,6 @@ COMMAND_DESCRIPTIONS = {
     "hook": "Creates a new hook",
     "entity": "Creates a new entity",
     "sync": "Synchronizes with the instance",
-    "sync-local": "Synchronizes all local files with cache",
     "help": "Displays help message",
     "exit": "Exit the script"
 }
@@ -29,8 +28,7 @@ def main():
     button_Command = ButtonCommand()
     hook_Command = HookCommand()
     entity_Command = EntityCommand()
-    sync_Command = SyncCommand(local=False)
-    local_sync_Command = SyncCommand(local=True)
+    sync_Command = SyncCommand()
     baseCommand = BaseCommand(__file__)
 
     while True:
@@ -54,8 +52,6 @@ def main():
                 help_message()
             case "sync":
                 sync_Command.run()
-            case "sync-local":
-                local_sync_Command.run()
             case "exit":
                 break
             case _:

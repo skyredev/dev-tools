@@ -12,6 +12,9 @@ from DevTools.Utils.CacheManager import CacheManager
 class BaseCommand:
 
     def __init__(self, command_file):
+        ## VARIABLES ##
+        self.languages = ["en_US", "cs_CZ"]
+        self.default_language = "en_US"
 
         ## PATHS ##
         self.current_dir = os.getcwd()
@@ -27,8 +30,15 @@ class BaseCommand:
         self.TerminalManager = TerminalManager(self.Validators)
         self.TemplateManager = TemplateManager()
         self.MetadataManager = MetadataManager()
-        self.FileManager = FileManager(self.TerminalManager, self.TemplateManager, self.MetadataManager, self.Validators, self.cache_path)
+        self.FileManager = FileManager(self.TerminalManager, self.TemplateManager, self.MetadataManager,
+                                       self.Validators, self.cache_path, self.languages, self.default_language)
         self.CacheManager = CacheManager(self.FileManager)
+
+        ## COMMAND INFO ##
+        self.command_name_without_extension = os.path.basename(command_file).split(".")[0]
+
+        if self.command_name_without_extension == "EntityCommand":
+            self.entities = self.get_entities_list()
 
     def get_module_suggestion(self):
         if os.path.isfile(self.package_json_dir):
@@ -43,10 +53,20 @@ class BaseCommand:
         return module
 
     def get_entity_name(self):
-        entities = self.FileManager.get_file_names(os.path.join(self.cache_path, "entityDefs"), ".json")
+        auto_complete_entities_array = list(set([entity[1] for entity in self.entities]))
+
         entity = self.TerminalManager.get_choice_with_autocomplete(
-            "Enter the entity name: ", entities, validator=self.Validators.entity_validator, send_choices=False)
+            "Enter the entity name: ", auto_complete_entities_array, validator=self.Validators.entity_validator,
+            send_choices=False)
         return entity
+
+    def get_entities_list(self):
+        entity_defs_cache = os.path.join(self.cache_path, "entityDefs")
+        entity_defs_local = os.path.join(self.current_dir, "src/backend/Resources/metadata/entityDefs")
+
+        entities = self.CacheManager.fetch_cache(entity_defs_cache, [".json"]) + self.CacheManager.fetch_cache(
+            entity_defs_local, [".json"])
+        return entities
 
     @staticmethod
     def colorization(color, text):

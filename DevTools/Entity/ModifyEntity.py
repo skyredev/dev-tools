@@ -20,15 +20,10 @@ class ModifyEntity(BaseCommand):
         "No"
     ]
 
-    LANGUAGES = [
-        "cs_CZ",
-        "en_US"
-    ]
-
     def __init__(self):
         super().__init__(command_file=__file__)
 
-    def modify(self, filepath, cache_path, entity_name):
+    def modify(self, filepath, entity_name, entities: list):
         while True:
             choice = self.TerminalManager.get_choice_with_autocomplete(
                 f"Entity '{entity_name}' already exists. What would you like to do? ",
@@ -37,11 +32,11 @@ class ModifyEntity(BaseCommand):
             )
             match choice:
                 case "Add Field":
-                    self.add_values(filepath, ['fields'], cache_path, entity_name)
+                    self.add_values(filepath, ['fields'], entity_name, entities)
                 case "Delete Field":
                     self.delete_keys(filepath, ['fields'], entity_name)
                 case "Add Link":
-                    self.add_values(filepath, ['links'], cache_path, entity_name)
+                    self.add_values(filepath, ['links'], entity_name, entities)
                 case "Delete Link":
                     self.delete_keys(filepath, ['links'], entity_name)
                 case "Translate Value":
@@ -49,8 +44,8 @@ class ModifyEntity(BaseCommand):
                 case "Exit":
                     break
 
-    def add_values(self, filepath, section_path, cache_path, entity_name):
-        self.FileManager.ensure_json_exists(filepath)
+    def add_values(self, filepath, section_path, entity_name, entities: list):
+        self.FileManager.ensure_file_exists(filepath)
 
         selectedValue = ""
         if section_path[0] == 'fields':
@@ -58,28 +53,31 @@ class ModifyEntity(BaseCommand):
         else:
             selectedValue = 'link'
 
+        existing_values = []
+        for entity in entities:
+            if entity[1] == entity_name:
+                fetched_values = self.MetadataManager.list(section_path, entity[0])
+                for value in fetched_values:
+                    existing_values.append(value.lower())
+        existing_values = list(set(existing_values))
+
         while True:
             values = self.get_available_values(section_path)
             value_type = self.TerminalManager.get_choice_with_autocomplete(
                 f"Start typing a {selectedValue} type you want to add or 'Exit' to finish: ",
                 values, validator=self.Validators.ChoiceValidator(values)
             )
-            existing_values_cache = self.MetadataManager.list(section_path, cache_path) if os.path.exists(cache_path) else []
-            existing_values_local = self.MetadataManager.list(section_path, filepath) if os.path.exists(filepath) else []
-            existing_values = existing_values_cache + existing_values_local
-
             if value_type == 'Exit':
                 break
+
             while True:
-                value_name = self.TerminalManager.get_converted_field_name(
-                    self.TerminalManager.get_user_input(f"Enter the name for the new {selectedValue}",
-                                                        validator=self.Validators.empty_string_validator),
-                    selectedValue.capitalize())
-                if value_name in existing_values:
-                    print(self.colorization('red',
-                                            f"Field '{value_name}' already exists. Please choose a different name."))
+                value_name = self.TerminalManager.get_user_input(f"Enter the name for the new {selectedValue}", validator=self.Validators.empty_string_validator)
+
+                if value_name.lower().strip() in existing_values:
+                    print(self.colorization('red', f"Field '{value_name}' already exists. Please choose a different name."))
                     continue
                 else:
+                    value_name = self.TerminalManager.get_converted_field_name(value_name, selectedValue.capitalize())
                     break
 
             label = self.TerminalManager.get_user_input("Enter the label for the new field",
@@ -87,6 +85,7 @@ class ModifyEntity(BaseCommand):
 
             hiddenField = ""
             tooltip = "None"
+
             if selectedValue == 'field':
                 hiddenField = self.TerminalManager.get_choice_with_autocomplete(
                     "Should the field be hidden? ", self.YES_NO, validator=self.Validators.ChoiceValidator(self.YES_NO)
@@ -96,7 +95,9 @@ class ModifyEntity(BaseCommand):
 
             value_instance = self.get_value_instance(value_type, value_name, section_path)
             options = value_instance.availableOptions
+
             self.configure_value_options(options, value_instance)
+
             if hiddenField == "Yes":
                 value_instance.set_value('hidden', True)
             if tooltip != "None":
@@ -117,6 +118,7 @@ class ModifyEntity(BaseCommand):
             self.MetadataManager.set(section_path, value_name, field_data, filepath)
 
             self.FileManager.add_translations(entity_name, section_path, value_name, label)
+
             if tooltip != "None":
                 self.FileManager.add_translations(entity_name, ['tooltips'], value_name, tooltip)
 
@@ -199,7 +201,7 @@ class ModifyEntity(BaseCommand):
 
                 language_files = self.FileManager.get_file_names(self.FileManager.get_i18n_path(), extension='folder')
                 for language in language_files:
-                    translation_filepath = self.FileManager.ensure_json_exists(
+                    translation_filepath = self.FileManager.ensure_file_exists(
                         self.FileManager.get_i18n_path(entity_name, language))
                     self.MetadataManager.delete(section_path, field_choice, translation_filepath)
 
@@ -209,21 +211,8 @@ class ModifyEntity(BaseCommand):
                 print(self.colorization('yellow', f"'{field_choice}' was not deleted"))
 
     def translate_values(self, entity_name):
-        languages = self.FileManager.get_file_names(self.FileManager.get_i18n_path(), extension='folder')
 
-        if len(languages) < 2:
-            print(self.colorization('red', "There are not enough languages to translate to. (At least 2 are required)"))
-            print(self.colorization('blue', f"Current languages: {', '.join(languages)}"))
-            add_new = self.TerminalManager.get_choice_with_autocomplete(
-                "Would you like to add a new language? ",
-                self.YES_NO,
-                validator=self.Validators.ChoiceValidator(self.YES_NO)
-            )
-            if add_new == "Yes":
-                new_language = self.TerminalManager.get_user_input("Enter the new language code: ")
-                self.FileManager.ensure_json_exists(
-                    os.path.join(self.current_dir, f"src/backend/Resources/i18n/{new_language}"))
-                languages.append(new_language)
+        languages = self.languages.copy()
 
         language = self.TerminalManager.get_choice_with_autocomplete(
             "Select the language to translate to: ",
@@ -242,9 +231,9 @@ class ModifyEntity(BaseCommand):
             else:
                 print(self.colorization('red', "You can't translate to the same language."))
 
-        filepath = self.FileManager.ensure_json_exists(self.FileManager.get_i18n_path(entity_name, opposite_language))
+        filepath = self.FileManager.ensure_file_exists(self.FileManager.get_i18n_path(entity_name, opposite_language))
 
-        translation_filepath = self.FileManager.ensure_json_exists(
+        translation_filepath = self.FileManager.ensure_file_exists(
             self.FileManager.get_i18n_path(entity_name, language))
 
         print(self.colorization('green', f"Translating '{entity_name}' from {opposite_language} to {language}"))

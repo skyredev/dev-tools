@@ -19,9 +19,18 @@ class CacheManager:
         if self.ssh_client is None:
             self.ssh_client = paramiko.SSHClient()
             self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.ssh_client.connect(
-                self.hostname, username=self.username,password=self.password,key_filename=self.ssh_key_path
-            )
+            if not self.username or not self.hostname:
+                raise Exception('SSH_HOST and SSH_USER environment variables must be set.')
+            if self.password is None and self.ssh_key_path is None:
+                raise Exception('Either SSH_PASSWORD or SSH_KEY_PATH environment variable must be set.')
+            if self.password is None:
+                self.ssh_client.connect(
+                    self.hostname, username=self.username, key_filename=self.ssh_key_path
+                )
+            else:
+                self.ssh_client.connect(
+                    self.hostname, username=self.username, password=self.password
+                )
 
     def disconnect(self):
         if self.ssh_client:
@@ -52,23 +61,17 @@ class CacheManager:
 
         return items
 
-    @staticmethod
-    def get_local_file_names(directory, return_type='files'):
+    def fetch_cache(self, directory, extensions: list):
+
+        self.FileManager.create_directory(directory)
+
         items = []
-        if "*" in directory:
-            base_dir = directory.replace("/*", "")
-            for root, dirs, files in os.walk(base_dir):
-                for file in files:
-                    file_name, file_extension = os.path.splitext(file)
-                    items.append((root, file_name, file_extension))
-        else:
-            for root, dirs, files in os.walk(directory):
-                for file in files:
-                    file_name, file_extension = os.path.splitext(file)
-                    if return_type == 'files':
-                        items.append((root, file_name, file_extension))
-                    elif return_type == 'directories':
-                        items.append(root)
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                file_name, file_extension = os.path.splitext(file)
+                if file_extension in extensions:
+                    full_path = os.path.join(root, file)
+                    items.append((full_path, file_name, file_extension))
         return items
 
     def get_instance_file(self, file_directory, file_name):
