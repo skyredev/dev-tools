@@ -212,7 +212,7 @@ class ModifyEntity(BaseCommand):
         while True:
             keys = self.MetadataManager.list(section_path, filepath)
             if not keys:
-                print("No fields available to delete.")
+                print(self.colorization("yellow", f"No {section_path[0]} available to delete"))
                 return
 
             keys.append('Exit')
