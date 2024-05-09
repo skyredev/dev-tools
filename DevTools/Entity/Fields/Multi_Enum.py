@@ -14,19 +14,6 @@ class Multi_Enum(Base):
             "default": [],
             "style": {},
         }
-        self.initAvailableOptionsForTranslate()
-
-    def initAvailableOptionsForTranslate(self):
-        # vlevo availableOptions, vpravo je path v JSONu, vcetne tech hodnot,
-        # meli by se dat generovat na zmenu, tim by se mel preklad zjednodusti a byt obecnejsi
-
-        availableOptionsForTranslate = {
-            #"options": "options:" + self.name + ":" + json.dump(self.availableOptions.get("options"))
-        }
-
-    availableOptionsAvailableValues = {
-
-    }
 
     availableOptions = {
         "required": ValidationOptions.TrueFalse,

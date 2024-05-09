@@ -4,7 +4,9 @@ import json
 
 class FileManager:
 
-    def __init__(self, TerminalManager, TemplateManager, MetadataManager, Validators, cache_path, languages, default_language):
+    def __init__(self, TerminalManager, TemplateManager, MetadataManager, Validators, cache_path, languages,
+                 default_language, colorization):
+
         self.TerminalManager = TerminalManager
         self.TemplateManager = TemplateManager
         self.MetadataManager = MetadataManager
@@ -12,7 +14,10 @@ class FileManager:
         self.cache_path = cache_path
         self.languages = languages
         self.default_language = default_language
-        self.resources_dir = os.path.join(os.path.dirname(__file__), '../../src/backend/Resources')
+        self.colorization = colorization
+
+        self.current_dir = os.getcwd()
+        self.resources_dir = os.path.join(self.current_dir, 'src/backend/Resources')
 
     YES_NO = [
         "Yes",
@@ -70,7 +75,7 @@ class FileManager:
     @staticmethod
     def read_file(source_path):
         # Load file from path_to_template
-        print("Reading file", source_path)
+        #print(self.colorization("blue", f"Reading file {source_path}"))
         try:
             with open(source_path, 'r', encoding='utf-8') as file:
                 content = json.load(file)
@@ -92,9 +97,9 @@ class FileManager:
                 json.dump(content, file, indent=2, ensure_ascii=False)
 
         if file_exists:
-            print(f"File updated: {destination_path}")
+            print(self.colorization("blue", f"File updated: {destination_path}"))
         else:
-            print(f"File created: {destination_path}")
+            print(self.colorization("green", f"File created: {destination_path}"))
 
     @staticmethod
     def get_file_names(directory, extension='.py', exclude=None):
@@ -142,17 +147,16 @@ class FileManager:
         other_languages = self.languages.copy()
         other_languages.remove(self.default_language)
 
-        self.MetadataManager.set(section_path, key, default_value, default_translation_filepath)
-        for language in other_languages:
-            add_translation = self.TerminalManager.get_choice_with_autocomplete(
-                f"Would you like to set a translation for {'>'.join(section_path)}>{key} in {language}? ",
-                self.YES_NO,
-                validator=self.Validators.ChoiceValidator(self.YES_NO)
-            )
-            if add_translation == "Yes":
-                translation_filepath = self.ensure_file_exists(
-                    self.get_i18n_path(entity_name, language))
+        default_value_translated = self.TerminalManager.get_user_input(
+            f"Enter the translation for {' > '.join(section_path)} > {key} in default language {self.default_language}", default=default_value.capitalize())
 
-                translation = self.TerminalManager.get_user_input(
-                    f"Enter the translation for {'>'.join(section_path)}>{key} in {language}")
-                self.MetadataManager.set(section_path, key, translation, translation_filepath)
+        self.MetadataManager.set(section_path, key, default_value_translated, default_translation_filepath)
+
+        for language in other_languages:
+
+            translation_filepath = self.ensure_file_exists(
+                self.get_i18n_path(entity_name, language))
+
+            translation = self.TerminalManager.get_user_input(
+                f"Enter the translation for {' > '.join(section_path)} > {key} in {language}", validator=self.Validators.empty_string_validator, default=default_value.capitalize())
+            self.MetadataManager.set(section_path, key, translation, translation_filepath)

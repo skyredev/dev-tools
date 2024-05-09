@@ -25,11 +25,11 @@ def usage():
 
 
 def main():
+    baseCommand = BaseCommand(__file__)
     button_Command = ButtonCommand()
     hook_Command = HookCommand()
     entity_Command = EntityCommand()
     sync_Command = SyncCommand()
-    baseCommand = BaseCommand(__file__)
 
     while True:
         print("")

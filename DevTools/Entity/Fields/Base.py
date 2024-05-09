@@ -1,6 +1,3 @@
-import json
-from DevTools.Utils.Validators import ValidationOptions
-
 
 class Base:
     name = "BaseField"
@@ -13,12 +10,24 @@ class Base:
 
     }
 
-    availableOptionsForTranslate = {
-
-    }
+    availableOptionsForTranslate = [
+        "options"
+    ]
 
     availableOptionsAvailableValues = {
-
+        "codeType": [
+            "CODE128", "CODE128A", "CODE128B", "CODE128C",
+            "EAN13", "EAN8", "EAN5", "EAN2", "UPC", "UPCE",
+            "ITF14", "pharmacode", "QRcode"
+        ],
+        "style": [
+            "Default",
+            "Success",
+            "Danger",
+            "Warning",
+            "Info",
+            "Primary"
+        ]
     }
 
     availableOptions = {

@@ -71,10 +71,12 @@ class ModifyEntity(BaseCommand):
                 break
 
             while True:
-                value_name = self.TerminalManager.get_user_input(f"Enter the name for the new {selectedValue}", validator=self.Validators.empty_string_validator)
+                value_name = self.TerminalManager.get_user_input(f"Enter the name for the new {selectedValue}",
+                                                                 validator=self.Validators.empty_string_validator)
 
                 if value_name.lower().strip() in existing_values:
-                    print(self.colorization('red', f"Field '{value_name}' already exists. Please choose a different name."))
+                    print(self.colorization('red',
+                                            f"Field '{value_name}' already exists. Please choose a different name."))
                     continue
                 else:
                     value_name = self.TerminalManager.get_converted_field_name(value_name, selectedValue.capitalize())
@@ -95,8 +97,11 @@ class ModifyEntity(BaseCommand):
 
             value_instance = self.get_value_instance(value_type, value_name, section_path)
             options = value_instance.availableOptions
+            options_AvailableValues = value_instance.availableOptionsAvailableValues
+            options_AvailableTranslations = value_instance.availableOptionsForTranslate
 
-            self.configure_value_options(options, value_instance)
+            self.configure_value_options(options, options_AvailableValues, options_AvailableTranslations,
+                                         value_instance, entity_name)
 
             if hiddenField == "Yes":
                 value_instance.set_value('hidden', True)
@@ -150,7 +155,7 @@ class ModifyEntity(BaseCommand):
             print(f"No class found for the value type: {value_type} in the module")
             return {}, value_type.lower()
 
-    def configure_value_options(self, options, value_instance):
+    def configure_value_options(self, options, availableValues, availableTranslations, value_instance, entity_name):
         option_keys = list(options.keys())
         option_keys.append('Exit')
         while True:
@@ -162,13 +167,44 @@ class ModifyEntity(BaseCommand):
             if option_choice == 'Exit':
                 break
 
-            validator = options.get(option_choice)
-            description = getattr(validator, 'description', "No description available.")
+            optionAvailableValues = availableValues.get(option_choice, [])
 
-            # Show the description before getting user input
-            print(description)
-            value = self.TerminalManager.get_user_input(f"Set value for {option_choice}", validator)
+            if optionAvailableValues:
+                value = self.TerminalManager.get_choice_with_autocomplete(
+                    f"Select an option value for '{option_choice}': ",
+                    optionAvailableValues, validator=self.Validators.ChoiceValidator(optionAvailableValues)
+                )
+
+            else:
+                validator = options.get(option_choice)
+                description = getattr(validator, 'description', "No description available.")
+
+                # Show the description before getting user input
+                print(description)
+
+                value = self.TerminalManager.get_user_input(f"Set value for {option_choice}", validator)
+
+            if option_choice == 'options' and 'style' in options:
+                style = {}
+                styles = availableValues.get('style', [])
+                for option in value:
+                    if option_choice in availableTranslations:
+                        self.FileManager.add_translations(entity_name, ['options', value_instance.get_name()], option, option)
+                    option_style = self.TerminalManager.get_choice_with_autocomplete(f"Select a style for '{option}': ", styles, validator=self.Validators.ChoiceValidator(styles))
+                    if option_style == 'Default':
+                        option_style = None
+                    else:
+                        option_style = option_style.lower()
+                    style[option] = option_style
+
+                value_instance.set_value('style', style)
+
+            elif option_choice in availableTranslations:
+                for option in value:
+                    self.FileManager.add_translations(entity_name, ['options', value_instance.get_name()], option, option)
+
             value_instance.set_value(option_choice, value)
+
             print(self.colorization('blue',
                                     f"{value_instance.get_name()}: {json.dumps(value_instance.get_data(), indent=4)})"))
 

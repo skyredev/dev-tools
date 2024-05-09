@@ -11,18 +11,6 @@ class Barcode(Base):
             "len": 255
         }
 
-    availableOptionsForTranslate = {
-
-    }
-
-    availableOptionsAvailableValues = {
-        "codeType": {
-            "CODE128", "CODE128A", "CODE128B", "CODE128C",
-            "EAN13", "EAN8", "EAN5", "EAN2", "UPC", "UPCE",
-            "ITF14", "pharmacode", "QRcode"
-        }
-    }
-
     availableOptions = {
         "required": ValidationOptions.TrueFalse,
         "codeType": ValidationOptions.Array,

@@ -12,9 +12,6 @@ from DevTools.Utils.CacheManager import CacheManager
 class BaseCommand:
 
     def __init__(self, command_file):
-        ## VARIABLES ##
-        self.languages = ["en_US", "cs_CZ"]
-        self.default_language = "en_US"
 
         ## PATHS ##
         self.current_dir = os.getcwd()
@@ -22,8 +19,13 @@ class BaseCommand:
         self.entity_defs_dir = os.path.join(self.current_dir, "src/backend/Resources/metadata/entityDefs")
         self.i18n_dir = os.path.join(self.current_dir, "src/backend/Resources/i18n")
         self.controllers_dir = os.path.join(self.current_dir, "src/backend/Controllers")
+        self.tool_path = os.path.join(self.current_dir, "apertia-tool")
         self.cache_path = os.path.join(self.current_dir, "apertia-tool/cache")
         self.package_json_dir = os.path.join(self.current_dir, "package.json")
+
+        ## VARIABLES ##
+        self.languages = []
+        self.default_language = ""
 
         ## UTILS ##
         self.Validators = Validators()
@@ -31,14 +33,15 @@ class BaseCommand:
         self.TemplateManager = TemplateManager()
         self.MetadataManager = MetadataManager()
         self.FileManager = FileManager(self.TerminalManager, self.TemplateManager, self.MetadataManager,
-                                       self.Validators, self.cache_path, self.languages, self.default_language)
+                                       self.Validators, self.cache_path, self.languages, self.default_language,
+                                       self.colorization)
         self.CacheManager = CacheManager(self.FileManager)
 
-        ## COMMAND INFO ##
-        self.command_name_without_extension = os.path.basename(command_file).split(".")[0]
+        ## CONFIG ##
+        self.read_config()
 
-        if self.command_name_without_extension == "EntityCommand":
-            self.entities = self.get_entities_list()
+        ## CACHE ##
+        self.entities = self.get_entities_list()
 
     def get_module_suggestion(self):
         if os.path.isfile(self.package_json_dir):
@@ -62,11 +65,31 @@ class BaseCommand:
 
     def get_entities_list(self):
         entity_defs_cache = os.path.join(self.cache_path, "entityDefs")
-        entity_defs_local = os.path.join(self.current_dir, "src/backend/Resources/metadata/entityDefs")
+        entity_defs_local = self.entity_defs_dir
 
         entities = self.CacheManager.fetch_cache(entity_defs_cache, [".json"]) + self.CacheManager.fetch_cache(
             entity_defs_local, [".json"])
         return entities
+
+    def read_config(self):
+        config_path = os.path.join(self.tool_path, 'config.json')
+        if not os.path.exists(config_path):
+            self.init_config()
+
+        self.languages = self.MetadataManager.get(config_path, ['languages'])
+        self.default_language = self.MetadataManager.get(config_path, ['default_language'])
+        self.FileManager.languages = self.languages
+        self.FileManager.default_language = self.default_language
+
+    def init_config(self):
+        if not os.path.exists(self.tool_path):
+            os.makedirs(self.tool_path)
+
+        content = self.FileManager.read_file(os.path.join(self.script_path, 'DevTools/config.json'))
+        self.FileManager.write_file(os.path.join(self.tool_path, 'config.json'), content)
+
+        print(self.colorization("yellow",
+                                f"Config initialized with default settings: {os.path.join(self.tool_path, 'config.json')}\nYou can modify the config file to change the settings (Dev Tool must be restarted)"))
 
     @staticmethod
     def colorization(color, text):
