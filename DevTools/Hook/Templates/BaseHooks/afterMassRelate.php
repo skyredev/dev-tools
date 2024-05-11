@@ -9,9 +9,9 @@ use Espo\ORM\Repository\Option\SaveOptions;
 use Espo\ORM\Repository\Option\MassRelateOptions;
 use Espo\ORM\Query\Select;
 
-class {HookNamePlaceHolder} implements afterMassRelate
+class {HookNamePlaceholder} implements afterMassRelate
 {
-    const DEBUG_PREFIX = '[{ModuleNamePlaceholder}\Hooks\{EntityNamePlaceholder}\{HookNamePlaceHolder}]';
+    const DEBUG_PREFIX = '[{ModuleNamePlaceholder}\Hooks\{EntityNamePlaceholder}\{HookNamePlaceholder}]';
 
     public function __construct(
         private Log $log

@@ -7,9 +7,9 @@ use Espo\ORM\Entity;
 use Espo\Core\Utils\Log;
 use Espo\ORM\Repository\Option\RemoveOptions;
 
-class {HookNamePlaceHolder} implements beforeRemove
+class {HookNamePlaceholder} implements beforeRemove
 {
-    const DEBUG_PREFIX = '[{ModuleNamePlaceholder}\Hooks\{EntityNamePlaceholder}\{HookNamePlaceHolder}]';
+    const DEBUG_PREFIX = '[{ModuleNamePlaceholder}\Hooks\{EntityNamePlaceholder}\{HookNamePlaceholder}]';
 
     public function __construct(
         private Log $log

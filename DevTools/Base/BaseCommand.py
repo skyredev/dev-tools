@@ -43,6 +43,11 @@ class BaseCommand:
         ## CACHE ##
         self.entities = self.get_entities_list()
 
+        self.command_name_without_extension = os.path.basename(command_file).split(".")[0]
+
+        if self.command_name_without_extension == "ControllerCommand":
+            self.controllers = self.get_controllers_list()
+
     def get_module_suggestion(self):
         if os.path.isfile(self.package_json_dir):
             with open(self.package_json_dir, "r") as file:
@@ -63,6 +68,14 @@ class BaseCommand:
             send_choices=False)
         return entity
 
+    def get_controller_name(self):
+        auto_complete_controllers_array = list(set([controller[1] for controller in self.controllers]))
+
+        controller = self.TerminalManager.get_choice_with_autocomplete(
+            "Enter the controller name: ", auto_complete_controllers_array, validator=self.Validators.controller_validator,
+            send_choices=False)
+        return controller
+
     def get_entities_list(self):
         entity_defs_cache = os.path.join(self.cache_path, "entityDefs")
         entity_defs_local = self.entity_defs_dir
@@ -70,6 +83,14 @@ class BaseCommand:
         entities = self.CacheManager.fetch_cache(entity_defs_cache, [".json"]) + self.CacheManager.fetch_cache(
             entity_defs_local, [".json"])
         return entities
+
+    def get_controllers_list(self):
+        controllers_cache = os.path.join(self.cache_path, "Controllers")
+        controllers_local = self.controllers_dir
+
+        controllers = self.CacheManager.fetch_cache(controllers_cache, [".php"]) + self.CacheManager.fetch_cache(
+            controllers_local, [".php"])
+        return controllers
 
     def read_config(self):
         config_path = os.path.join(self.tool_path, 'config.json')

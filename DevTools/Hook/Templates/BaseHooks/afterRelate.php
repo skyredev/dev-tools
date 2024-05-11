@@ -7,9 +7,9 @@ use Espo\ORM\Entity;
 use Espo\Core\Utils\Log;
 use Espo\ORM\Repository\Option\RelateOptions;
 
-class {HookNamePlaceHolder} implements afterRelate
+class {HookNamePlaceholder} implements afterRelate
 {
-    const DEBUG_PREFIX = '[{ModuleNamePlaceholder}\Hooks\{EntityNamePlaceholder}\{HookNamePlaceHolder}]';
+    const DEBUG_PREFIX = '[{ModuleNamePlaceholder}\Hooks\{EntityNamePlaceholder}\{HookNamePlaceholder}]';
 
     public function __construct(
         private Log $log

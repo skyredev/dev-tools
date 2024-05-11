@@ -97,10 +97,16 @@ class Validators:
         raise Validators.ValidationError("Entity name can only contain letters.")
 
     @staticmethod
-    def hook_name_validator(name):
+    def controller_validator(name):
+        if re.fullmatch(r'[a-zA-Z]+', name):
+            return name
+        raise Validators.ValidationError("Controller name can only contain letters.")
+
+    @staticmethod
+    def class_name_validator(name):
         if re.fullmatch(r'[a-zA-Z_]+', name):
             return name
-        raise Validators.ValidationError("Hook name can only contain letters and underscores.")
+        raise Validators.ValidationError("Class name can only contain letters and underscores.")
 
     @staticmethod
     def empty_string_validator(value):

@@ -18,6 +18,7 @@ class FileManager:
 
         self.current_dir = os.getcwd()
         self.resources_dir = os.path.join(self.current_dir, 'src/backend/Resources')
+        self.backend_dir = os.path.join(self.current_dir, 'src/backend')
 
     YES_NO = [
         "Yes",
@@ -123,6 +124,9 @@ class FileManager:
 
     def get_entity_defs_cache_path(self, entity_name):
         return os.path.join(self.cache_path, f"entityDefs/{entity_name}.json")
+
+    def get_controller_path(self, controller_name):
+        return os.path.join(self.backend_dir, f"Controllers/{controller_name}.php")
 
     def get_entity_defs_path(self, entity_name):
         return os.path.join(self.resources_dir, f"metadata/entityDefs/{entity_name}.json")

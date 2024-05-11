@@ -3,11 +3,15 @@ from DevTools.Hook.HookCommand import HookCommand
 from DevTools.Entity.EntityCommand import EntityCommand
 from DevTools.Base.BaseCommand import BaseCommand
 from DevTools.Sync.SyncCommand import SyncCommand
+from DevTools.Action.ActionCommand import ActionCommand
+from DevTools.Controller.ControllerCommand import ControllerCommand
 
 COMMAND_DESCRIPTIONS = {
+    "action": "Creates a new action",
     "button": "Creates a new button",
-    "hook": "Creates a new hook",
+    "controller": "Creates a new controller",
     "entity": "Creates a new entity",
+    "hook": "Creates a new hook",
     "sync": "Synchronizes with the instance",
     "help": "Displays help message",
     "exit": "Exit the script"
@@ -30,6 +34,8 @@ def main():
     hook_Command = HookCommand()
     entity_Command = EntityCommand()
     sync_Command = SyncCommand()
+    action_Command = ActionCommand()
+    controller_Command = ControllerCommand()
 
     while True:
         print("")
@@ -42,12 +48,16 @@ def main():
         )
 
         match command:
+            case "action":
+                action_Command.run()
             case "button":
                 button_Command.run()
-            case "hook":
-                hook_Command.run()
+            case "controller":
+                controller_Command.run()
             case "entity":
                 entity_Command.run()
+            case "hook":
+                hook_Command.run()
             case "help":
                 help_message()
             case "sync":
