@@ -33,9 +33,6 @@ class ControllerCommand(BaseCommand):
                 if "custom.Espo.Custom" in existing_controller[0]:
                     unextendable_controllers.append(existing_controller[0])
 
-            print(unextendable_controllers)
-            print(existing_controllers_list)
-
             if len(unextendable_controllers) == len(existing_controllers_list):
                 print(self.colorization("yellow",
                                         "Found existing controller(s) with the same name, but they are all custom controllers and cannot be extended."))
