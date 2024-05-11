@@ -46,15 +46,6 @@ class ControllerHelpers(BaseCommand):
     def get_real_controller_path(cleaner_paths_dict, extending_controller):
         return list(cleaner_paths_dict.keys())[list(cleaner_paths_dict.values()).index(extending_controller)]
 
-    def get_extension_from_content(self, content, controller_name, message=False):
-        if "namespace" in content:
-            namespace = content.split("namespace ")[1].split(";")[0]
-        else:
-            namespace = "NO NAMESPACE FOUND IN EXTENDING CONTROLLER"
-        if message:
-            print(self.colorization("green", f"New controller will extend from {namespace}\\{controller_name}"))
-        return f"extends {namespace}\\{controller_name}"
-
     @staticmethod
     def generate_template_values_controller(module, controller_name, extension=""):
         return {

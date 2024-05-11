@@ -49,7 +49,7 @@ class ControllerCommand(BaseCommand):
             self.Controller_Processes.create_controller(module, controller_name, controller_file_path)
         elif action == "Extend":
             if exists_locally:
-                self.Controller_Helpers.get_extension_from_content(self.FileManager.read_file(controller_file_path),
+                self.get_extension_from_content(self.FileManager.read_file(controller_file_path),
                                                                    controller_name,
                                                                    message=True)
                 new_controller_name = self.Controller_Helpers.get_new_controller_name()

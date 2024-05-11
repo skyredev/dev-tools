@@ -47,7 +47,7 @@ class ControllerProcesses(BaseCommand):
             new_controller_name = controller_name
         if extending_controller_path:
             extending_controller_content = self.FileManager.read_file(extending_controller_path)
-            extension = self.Helpers.get_extension_from_content(extending_controller_content, controller_name)
+            extension = self.get_extension_from_content(extending_controller_content, controller_name)
         else:
             root_dir = os.path.join(self.cache_path, "Controllers")
             current_dir = root_dir
@@ -73,7 +73,7 @@ class ControllerProcesses(BaseCommand):
                 else:
                     extending_controller_path = os.path.join(current_dir, extending_controller)
                     extending_controller_content = self.FileManager.read_file(extending_controller_path)
-                    extension = self.Helpers.get_extension_from_content(extending_controller_content,
+                    extension = self.get_extension_from_content(extending_controller_content,
                                                                         extending_controller.replace(".php", ""),
                                                                         message=True)
                     break
@@ -176,7 +176,7 @@ class ControllerProcesses(BaseCommand):
                 else:
                     break
 
-            self.Helpers.get_extension_from_content(self.FileManager.read_file(extending_controller_path),
+            self.get_extension_from_content(self.FileManager.read_file(extending_controller_path),
                                                     controller_name,
                                                     message=True)
             new_controller_name = self.Helpers.get_new_controller_name()
