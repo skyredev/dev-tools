@@ -102,17 +102,23 @@ class ControllerCommand(BaseCommand):
             extending_controller_content = self.FileManager.read_file(extending_controller_path)
             extension = self.get_extension_from_content(extending_controller_content, controller_name)
         else:
-            current_dir = os.path.join(self.cache_path, "Controllers")
+            root_dir = os.path.join(self.cache_path, "Controllers")
+            current_dir = root_dir
 
             while True:
                 folder_items = os.listdir(current_dir)
-                folder_items.remove("custom.Espo.Custom")
+                if current_dir == root_dir:
+                    folder_items.remove("custom.Espo.Custom")
+                    folder_items.append('local')
 
                 extending_controller = self.TerminalManager.get_choice_with_autocomplete(
                     "Choose the controller you would like to extend: ",
                     folder_items,
                     validator=self.Validators.ChoiceValidator(folder_items)
                 )
+                if extending_controller == 'local':
+                    current_dir = self.controllers_dir  # Change directory to local controllers
+                    continue
 
                 if os.path.isdir(os.path.join(current_dir, extending_controller)):
                     current_dir = os.path.join(current_dir, extending_controller)
