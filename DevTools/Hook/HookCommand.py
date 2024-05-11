@@ -28,6 +28,11 @@ class HookCommand(BaseCommand):
         )
 
         hook_name = self.TerminalManager.get_user_input("Enter the hook name", self.Validators.class_name_validator)
+        while self.file_exists_local_folder(hook_name, os.path.join(self.current_dir, f"src/backend/Hooks/{entity}"), ".php"):
+            print(self.colorization("yellow",
+                                    "Hook with the same name already exists locally. Please type a different name."))
+            hook_name = self.TerminalManager.get_user_input("Enter the hook name",
+                                                            self.Validators.class_name_validator)
 
         populated_template = self.TemplateManager.set_template_values(
             self.FileManager.read_file(os.path.join(self.script_path, "Templates/BaseHooks/" + hook_type + ".php")),
@@ -35,7 +40,7 @@ class HookCommand(BaseCommand):
                 module, entity, hook_name)
         )
 
-        php_dir = os.path.join(self.current_dir, f"src/backend/Hooks/{entity}/{hook_name}.php")
+        php_dir = self.FileManager.get_hook_path(entity, hook_name)
 
         self.FileManager.write_file(php_dir, populated_template)
 

@@ -19,10 +19,12 @@ class ControllerHelpers(BaseCommand):
         cleaner_paths_dict = {}
         for controller in existing_controllers_list:
             if self.cache_path in controller[0]:
-                cleaner_paths_dict[controller[0]] = controller[0].replace(self.cache_path, "").replace("\\", "/").replace(
+                cleaner_paths_dict[controller[0]] = controller[0].replace(self.cache_path, "").replace("\\",
+                                                                                                       "/").replace(
                     "/Controllers/", "")
             else:
-                cleaner_paths_dict[controller[0]] = controller[0].replace(self.current_dir, "").replace("\\", "/").lstrip(
+                cleaner_paths_dict[controller[0]] = controller[0].replace(self.current_dir, "").replace("\\",
+                                                                                                        "/").lstrip(
                     "/")
         return cleaner_paths_dict
 
@@ -31,7 +33,7 @@ class ControllerHelpers(BaseCommand):
             "Enter the NEW controller name",
             validator=self.Validators.controller_validator
         )
-        while self.controller_name_exists_locally(new_controller_name):
+        while self.file_exists_local_folder(new_controller_name, self.controllers_dir, ".php"):
             print(self.colorization("yellow",
                                     "Controller with the same name already exists locally. Please type a different name."))
             new_controller_name = self.TerminalManager.get_user_input(
@@ -43,11 +45,6 @@ class ControllerHelpers(BaseCommand):
     @staticmethod
     def get_real_controller_path(cleaner_paths_dict, extending_controller):
         return list(cleaner_paths_dict.keys())[list(cleaner_paths_dict.values()).index(extending_controller)]
-
-    def controller_name_exists_locally(self, controller_name):
-        if controller_name + ".php" in os.listdir(self.controllers_dir):
-            return True
-        return False
 
     def get_extension_from_content(self, content, controller_name, message=False):
         if "namespace" in content:

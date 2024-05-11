@@ -22,6 +22,6 @@ class {HookNamePlaceholder} implements afterRemove
 
     public function afterRemove (Entity $entity, RemoveOptions $options): void
     {
-
+        // Your code here
     }
 }

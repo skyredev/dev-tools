@@ -19,6 +19,7 @@ class ControllerProcesses(BaseCommand):
         "get",
         "put",
         "delete",
+        "Custom Route",
         "Exit"
     ]
 
@@ -80,29 +81,61 @@ class ControllerProcesses(BaseCommand):
         self.create_controller(module, new_controller_name, controller_file_path, extension=extension)
 
     def add_actions(self, controller_file_path, controller_content):
+        methods = self.ACTIONS_METHODS.copy()
+
+        custom_route = False
         while True:
             method = self.TerminalManager.get_choice_with_autocomplete(
                 "Choose the action you would like to add: ",
-                self.ACTIONS_METHODS,
-                validator=self.Validators.ChoiceValidator(self.ACTIONS_METHODS)
+                methods,
+                validator=self.Validators.ChoiceValidator(methods)
             )
 
             if method == "Exit":
                 break
+            elif method == "Custom Route":
+                methods.remove("Custom Route")
+                methods.remove("Exit")
+                custom_route = True
+                continue
 
             action = self.TerminalManager.get_user_input(
                 "Enter the action name",
                 validator=self.Validators.action_validator
             )
+
             action_content = self.TemplateManager.set_template_values(
                 self.FileManager.read_file(
                     os.path.join(self.script_path, "Templates/Actions/" + f"{method}Action" + ".php")),
-                self.Helpers.generate_template_values_action(method, action[0].upper() + action[1:])
+                self.Helpers.generate_template_values_action(method, action)
             )
 
             controller_content = controller_content.rsplit("}", 1)[0] + f"\n{action_content}" + "}"
 
             self.FileManager.write_file(controller_file_path, controller_content)
+
+            if custom_route:
+                route = self.TerminalManager.get_user_input("Enter the route for the action",
+                                                            self.Validators.empty_string_validator)
+                noAuth = self.TerminalManager.get_choice_with_autocomplete(
+                    "Does this action require authentication? ",
+                    self.YES_NO,
+                    validator=self.Validators.ChoiceValidator(self.YES_NO)
+                )
+
+                if noAuth == "Yes":
+                    noAuth = True
+                else:
+                    noAuth = False
+
+                controller_name = controller_file_path.split("/")[-1].replace(".php", "")
+
+                self.append_route(method, route, controller_name, action, noAuth)
+
+                print(self.colorization("green", f"Route added successfully: {method.upper()} {route} -> {controller_name}.php -> {method}Action{action}"))
+
+                custom_route = False
+                methods = self.ACTIONS_METHODS.copy()
 
     def suggest_extension(self, module, controller_name, controller_file_path):
         existing_controllers_list = self.Helpers.get_cache_path(controller_name)
@@ -155,3 +188,24 @@ class ControllerProcesses(BaseCommand):
 
         else:
             self.base_process(module, controller_name, controller_file_path)
+
+    def append_route(self, method, route_string, controller_name, action_name, noAuth):
+        route = {
+            "route": route_string,
+            "method": method,
+            "params": {
+                "controller": controller_name,
+                "action": action_name
+            }
+        }
+
+        if noAuth:
+            route["noAuth"] = True
+
+        params = route_string.split("/")
+        for param in params:
+            if ':' in param:
+                route["params"][param.split(":")[1]] = param
+
+        path = self.FileManager.ensure_file_exists(self.routes_path, json_list=True)
+        self.MetadataManager.append_array([], route, path)

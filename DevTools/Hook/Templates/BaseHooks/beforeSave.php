@@ -22,6 +22,6 @@ class {HookNamePlaceholder} implements beforeSave
 
     public function beforeSave (Entity $entity, SaveOptions $options): void
     {
-
+        // Your code here
     }
 }

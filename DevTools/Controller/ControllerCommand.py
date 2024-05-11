@@ -30,7 +30,7 @@ class ControllerCommand(BaseCommand):
 
     def base_process(self, module, controller_name, controller_file_path):
         adjusted_action = self.ACTION.copy()
-        exists_locally = self.Controller_Helpers.controller_name_exists_locally(controller_name)
+        exists_locally = self.Controller_Helpers.file_exists_local_folder(controller_name, self.controllers_dir, ".php")
 
         if exists_locally:
             print(self.colorization("yellow",

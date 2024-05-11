@@ -30,10 +30,13 @@ class FileManager:
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-    def ensure_file_exists(self, file_path):
+    def ensure_file_exists(self, file_path, json_list=False):
         if not os.path.exists(file_path):
             if file_path.endswith('.json'):
-                self.write_file(file_path, '{}')
+                if json_list:
+                    self.write_file(file_path, '[]')
+                else:
+                    self.write_file(file_path, '{}')
             else:
                 self.write_file(file_path, '')
         return file_path
@@ -76,7 +79,7 @@ class FileManager:
     @staticmethod
     def read_file(source_path):
         # Load file from path_to_template
-        #print(self.colorization("blue", f"Reading file {source_path}"))
+        # print(self.colorization("blue", f"Reading file {source_path}"))
         try:
             with open(source_path, 'r', encoding='utf-8') as file:
                 content = json.load(file)
@@ -122,6 +125,18 @@ class FileManager:
                           filename.endswith(extension) and filename not in exclude]
             return file_names
 
+    def get_handler_path(self, entity_name, button_name):
+        return os.path.join(self.current_dir, f"src/client/src/handlers/{entity_name}/{button_name}-handler.js")
+
+    def get_api_action_path(self, entity_name, action_name):
+        return os.path.join(self.backend_dir, f"Api/{entity_name}/{action_name}.php")
+
+    def get_hook_path(self, entity_name, hook_name):
+        return os.path.join(self.backend_dir, f"Hooks/{entity_name}/{hook_name}.php")
+
+    def get_backend_mass_action_path(self, entity_name, mass_action_name):
+        return os.path.join(self.backend_dir, f"MassAction/{entity_name}/{mass_action_name}.php")
+
     def get_entity_defs_cache_path(self, entity_name):
         return os.path.join(self.cache_path, f"entityDefs/{entity_name}.json")
 
@@ -152,15 +167,16 @@ class FileManager:
         other_languages.remove(self.default_language)
 
         default_value_translated = self.TerminalManager.get_user_input(
-            f"Enter the translation for {' > '.join(section_path)} > {key} in default language {self.default_language}", default=default_value.capitalize())
+            f"Enter the translation for {' > '.join(section_path)} > {key} in default language {self.default_language}",
+            default=default_value[0].upper() + default_value[1:])
 
         self.MetadataManager.set(section_path, key, default_value_translated, default_translation_filepath)
 
         for language in other_languages:
-
             translation_filepath = self.ensure_file_exists(
                 self.get_i18n_path(entity_name, language))
 
             translation = self.TerminalManager.get_user_input(
-                f"Enter the translation for {' > '.join(section_path)} > {key} in {language}", validator=self.Validators.empty_string_validator, default=default_value.capitalize())
+                f"Enter the translation for {' > '.join(section_path)} > {key} in {language}",
+                validator=self.Validators.empty_string_validator, default=default_value[0].upper() + default_value[1:])
             self.MetadataManager.set(section_path, key, translation, translation_filepath)

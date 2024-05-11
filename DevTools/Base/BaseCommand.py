@@ -19,9 +19,12 @@ class BaseCommand:
         self.entity_defs_dir = os.path.join(self.current_dir, "src/backend/Resources/metadata/entityDefs")
         self.i18n_dir = os.path.join(self.current_dir, "src/backend/Resources/i18n")
         self.controllers_dir = os.path.join(self.current_dir, "src/backend/Controllers")
+        self.api_actions_dir = os.path.join(self.current_dir, "src/backend/Api")
+        self.mass_actions_dir = os.path.join(self.current_dir, "src/backend/MassAction")
         self.tool_path = os.path.join(self.current_dir, "apertia-tool")
         self.cache_path = os.path.join(self.current_dir, "apertia-tool/cache")
         self.package_json_dir = os.path.join(self.current_dir, "package.json")
+        self.routes_path = os.path.join(self.current_dir, "src/backend/Resources/routes.json")
 
         ## VARIABLES ##
         self.languages = []
@@ -60,6 +63,15 @@ class BaseCommand:
             "Enter the module name", self.Validators.empty_string_validator, default=self.get_module_suggestion())
         return module
 
+    @staticmethod
+    def file_exists_local_folder(file_name, folder, extension):
+        if not os.path.exists(folder):
+            return False
+        lower_files = [f.lower() for f in os.listdir(folder)]
+        if file_name.lower() + extension in lower_files:
+            return True
+        return False
+
     def get_entity_name(self):
         auto_complete_entities_array = list(set([entity[1] for entity in self.entities]))
 
@@ -72,7 +84,8 @@ class BaseCommand:
         auto_complete_controllers_array = list(set([controller[1] for controller in self.controllers]))
 
         controller = self.TerminalManager.get_choice_with_autocomplete(
-            "Enter the controller name: ", auto_complete_controllers_array, validator=self.Validators.controller_validator,
+            "Enter the controller name: ", auto_complete_controllers_array,
+            validator=self.Validators.controller_validator,
             send_choices=False)
         return controller
 

@@ -38,7 +38,7 @@ class MetadataManager:
             file.truncate()
 
     @staticmethod
-    def set_array(section_path, index, value, filepath):
+    def append_array(section_path, value, filepath):
         with open(filepath, 'r+', encoding='utf-8') as file:
             data = json.load(file)
             current_section = data
@@ -51,10 +51,7 @@ class MetadataManager:
                 print(f"Error: Expected a list at {section_path}, found {type(current_section).__name__}.")
                 return
 
-            if len(current_section) <= index:
-                current_section.extend([None] * (index + 1 - len(current_section)))
-
-            current_section[index] = value
+            current_section.append(value)
 
             file.seek(0)
             file.write(json.dumps(data, indent=4, ensure_ascii=False))

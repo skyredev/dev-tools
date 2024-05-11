@@ -22,6 +22,6 @@ class {HookNamePlaceholder} implements beforeRemove
 
     public function beforeRemove (Entity $entity, RemoveOptions $options): void
     {
-
+        // Your code here
     }
 }

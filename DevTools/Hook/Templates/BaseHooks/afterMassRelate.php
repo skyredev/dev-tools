@@ -24,6 +24,6 @@ class {HookNamePlaceholder} implements afterMassRelate
 
     public function afterMassRelate (Entity $entity, string $relationName, Select $query, array $columnData, MassRelateOptions $options): void
     {
-
+        // Your code here
     }
 }

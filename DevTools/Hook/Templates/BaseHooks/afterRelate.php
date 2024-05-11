@@ -22,6 +22,6 @@ class {HookNamePlaceholder} implements afterRelate
 
     public function afterRelate (Entity $entity, string $relationName, Entity $relatedEntity, array $columnData, RelateOptions $options): void
     {
-
+        // Your code here
     }
 }

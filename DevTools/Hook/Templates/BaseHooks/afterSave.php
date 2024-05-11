@@ -22,6 +22,6 @@ class {HookNamePlaceholder} implements afterSave
 
     public function afterSave (Entity $entity, SaveOptions $options): void
     {
-
+        // Your code here
     }
 }

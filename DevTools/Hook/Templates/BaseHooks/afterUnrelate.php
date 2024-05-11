@@ -22,6 +22,6 @@ class {HookNamePlaceholder} implements afterUnrelate
 
     public function afterUnrelate (Entity $entity, string $relationName, Entity $relatedEntity, UnrelateOptions $options): void
     {
-
+        // Your code here
     }
 }
