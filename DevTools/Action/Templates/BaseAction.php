@@ -6,15 +6,14 @@ use Espo\Core\Api\Request;
 use Espo\Core\Api\Response;
 use Espo\Core\Api\ResponseComposer;
 
-use Espo\Modules\{ModuleNamePlaceholder}\Service;
-
 class {ActionNamePlaceholder} implements Action
 {
-    public function __construct(private Service $service) {}
+    public function __construct() {}
 
     public function process(Request $request): Response
     {
-        $data = $this->service->get();
+        $data = $request->getRouteParam('text');
+        $data = $request->getParsedBody();
 
         return ResponseComposer::json($data);
     }
