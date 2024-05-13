@@ -3,7 +3,7 @@
     "__APPEND__",
     {
       "label": "{ButtonLabelPlaceholder}",
-      "name": "{ButtonNamePlaceholder}",
+      "name": "{FunctionNamePlaceholder}",
       "acl": "edit",
       "data": {
         "handler": "{ModuleNamePlaceholder}:handlers/{EntityNamePlaceholder}/{ButtonNamePlaceholder}-handler"

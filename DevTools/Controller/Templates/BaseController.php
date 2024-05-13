@@ -1,6 +1,9 @@
 <?php
 namespace Espo\Modules\{ModuleNamePlaceholder}\Controllers;
 
-class {ControllerNamePlaceholder} {ExtensionPlaceholder}
+use Espo\Core\Api\Request;
+use Espo\Core\Api\Response;
+
+class {ControllerNamePlaceholder} \{ExtensionPlaceholder}
 {
 }
