@@ -51,7 +51,7 @@ class SyncCommand(BaseCommand):
 
     def get_i18n(self):
         target_dir = "Resources/i18n"
-        target_languages = ["en_US", "cs_CZ"]
+        target_languages = self.languages
         paths = [
             [f"application/Espo/{target_dir}", target_languages],
             [f"custom/Espo/Custom/{target_dir}", target_languages],
