@@ -97,6 +97,12 @@ class Validators:
         raise Validators.ValidationError("Entity name can only contain letters.")
 
     @staticmethod
+    def service_validator(name):
+        if re.fullmatch(r'[a-zA-Z]+', name):
+            return name
+        raise Validators.ValidationError("Service name can only contain letters.")
+
+    @staticmethod
     def action_validator(name):
         if re.fullmatch(r'[a-zA-Z]+', name):
             return name
@@ -107,6 +113,12 @@ class Validators:
         if re.fullmatch(r'[a-zA-Z]+', name):
             return name
         raise Validators.ValidationError("Controller name can only contain letters.")
+
+    @staticmethod
+    def new_name_validator(name):
+        if re.fullmatch(r'[a-zA-Z]+', name):
+            return name
+        raise Validators.ValidationError("Name can only contain letters.")
 
     @staticmethod
     def class_name_validator(name):

@@ -1,17 +1,21 @@
-from DevTools.Button.ButtonCommand import ButtonCommand
-from DevTools.Hook.HookCommand import HookCommand
-from DevTools.Entity.EntityCommand import EntityCommand
-from DevTools.Base.BaseCommand import BaseCommand
-from DevTools.Sync.SyncCommand import SyncCommand
-from DevTools.Action.ActionCommand import ActionCommand
-from DevTools.Controller.ControllerCommand import ControllerCommand
+from DevTools.Button.Button_Command import ButtonCommand
+from DevTools.Hook.Hook_Command import HookCommand
+from DevTools.EntityMetadata.Entity_Metadata_Command import EntityMetadataCommand
+from DevTools.Base.Base_Command import BaseCommand
+from DevTools.Sync.Sync_Command import SyncCommand
+from DevTools.Action.Action_Command import ActionCommand
+from DevTools.Controller.Controller_Command import ControllerCommand
+from DevTools.EntityPHP.Entity_PHP_Command import EntityPHPCommand
+from DevTools.Services.Service_Command import ServiceCommand
 
 COMMAND_DESCRIPTIONS = {
     "action": "Creates a new action",
     "button": "Creates a new button",
     "controller": "Creates a new controller",
-    "entity": "Creates a new entity",
+    "entityDefs": "Creates a new metadata entity",
+    "entityPHP": "Creates a new PHP entity",
     "hook": "Creates a new hook",
+    "service": "Creates a new service",
     "sync": "Synchronizes with the instance",
     "help": "Displays help message",
     "exit": "Exit the script"
@@ -25,14 +29,16 @@ def help_message():
 def usage():
     print("Available commands:")
     for command, description in COMMAND_DESCRIPTIONS.items():
-        print(f"  {command:10} {description}")
+        print(f"  {command:15} {description}")
 
 
 def main():
     baseCommand = BaseCommand(__file__)
     button_Command = ButtonCommand()
     hook_Command = HookCommand()
-    entity_Command = EntityCommand()
+    entity_metadata_Command = EntityMetadataCommand()
+    entity_php_Command = EntityPHPCommand()
+    service_Command = ServiceCommand()
     sync_Command = SyncCommand()
     action_Command = ActionCommand()
     controller_Command = ControllerCommand()
@@ -55,7 +61,11 @@ def main():
             case "controller":
                 controller_Command.run()
             case "entity":
-                entity_Command.run()
+                entity_metadata_Command.run()
+            case "entityPHP":
+                entity_php_Command.run()
+            case "service":
+                service_Command.run()
             case "hook":
                 hook_Command.run()
             case "help":
