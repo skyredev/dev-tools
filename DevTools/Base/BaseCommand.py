@@ -79,7 +79,7 @@ class BaseCommand:
             namespace = "NO NAMESPACE FOUND IN EXTENDING CONTROLLER"
         if message:
             print(self.colorization("green", f"New class will extend from {namespace}\\{name}"))
-        return f"extends {namespace}\\{name}"
+        return f"extends \\{namespace}\\{name}"
 
     def get_entity_name(self):
         auto_complete_entities_array = list(set([entity[1] for entity in self.entities]))
