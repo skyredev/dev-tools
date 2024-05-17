@@ -71,7 +71,7 @@ def main():
                 controller_Command.run()
             case "dynamicHandler":
                 dynamic_handler_Command.run()
-            case "entity":
+            case "entityDefs":
                 entity_metadata_Command.run()
             case "entityPHP":
                 entity_php_Command.run()
