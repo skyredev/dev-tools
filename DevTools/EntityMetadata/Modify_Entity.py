@@ -15,11 +15,6 @@ class ModifyEntity(BaseCommand):
         "Exit"
     ]
 
-    YES_NO = [
-        "Yes",
-        "No"
-    ]
-
     def __init__(self):
         super().__init__(command_file=__file__)
 
@@ -89,9 +84,7 @@ class ModifyEntity(BaseCommand):
             tooltip = "None"
 
             if selectedValue == 'field':
-                hiddenField = self.TerminalManager.get_choice_with_autocomplete(
-                    "Should the field be hidden? ", self.YES_NO, validator=self.Validators.ChoiceValidator(self.YES_NO)
-                )
+                hiddenField = self.TerminalManager.get_yes_no("Is this a hidden field?")
 
                 tooltip = self.TerminalManager.get_user_input("Enter the tooltip for the new field", default='None')
 
@@ -103,7 +96,7 @@ class ModifyEntity(BaseCommand):
             self.configure_value_options(options, options_AvailableValues, options_AvailableTranslations,
                                          value_instance, entity_name)
 
-            if hiddenField == "Yes":
+            if hiddenField:
                 value_instance.set_value('hidden', True)
             if tooltip != "None":
                 value_instance.set_value('tooltip', True)
@@ -226,13 +219,9 @@ class ModifyEntity(BaseCommand):
             if field_choice == 'Exit':
                 break
 
-            confirm = self.TerminalManager.get_choice_with_autocomplete(
-                f"Are you sure you want to delete '{field_choice}'? ",
-                self.YES_NO,
-                validator=self.Validators.ChoiceValidator(self.YES_NO)
-            )
+            confirm = self.TerminalManager.get_yes_no(f"Are you sure you want to delete '{field_choice}'?")
 
-            if confirm == "Yes":
+            if confirm:
                 self.MetadataManager.delete(section_path, field_choice, filepath)
 
                 language_files = self.FileManager.get_file_names(self.PathManager.get_i18n_path(), extension='folder')

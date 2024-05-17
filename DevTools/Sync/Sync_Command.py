@@ -8,6 +8,7 @@ class SyncCommand(BaseCommand):
         super().__init__(command_file=__file__)
 
     def run(self):
+        self.get_tools()
         self.get_services()
         self.get_entities_php()
         self.get_controllers()
@@ -15,6 +16,16 @@ class SyncCommand(BaseCommand):
         self.get_i18n()
         self.CacheManager.disconnect()
         print(self.colorization("green", "Sync completed!"))
+
+    def get_tools(self):
+        target_dir = "Tools"
+        paths = [
+            f"application/Espo/{target_dir}/*",
+            f"application/Espo/Modules/*/{target_dir}/*",
+            f"custom/Espo/Modules/*/{target_dir}/*"
+        ]
+
+        self.fetch_paths(paths, target_dir, "Tools")
 
     def get_services(self):
         target_dir = "Services"
@@ -125,7 +136,7 @@ class SyncCommand(BaseCommand):
                                                 file_name + file_extension).replace('\\', '/')
             else:
                 final_cache_path = os.path.join(self.cache_dir, cache_folder, file_name + file_extension).replace('\\',
-                                                                                                                   '/')
+                                                                                                                  '/')
 
             data = self.CacheManager.get_instance_file(full_path, file_name + file_extension)
             self.FileManager.write_file(final_cache_path, data)

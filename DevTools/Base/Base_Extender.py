@@ -5,7 +5,6 @@ from DevTools.Utils.HelperFunctions import Helpers
 
 
 class BaseProcessor(BaseCommand):
-    YES_NO = ["Yes", "No"]
     ACTIONS = ["Create", "Extend"]
 
     def __init__(self, command_file, item_type, template_name, folder_name):
@@ -85,13 +84,9 @@ class BaseProcessor(BaseCommand):
             base_process(module, item_name, item_file_path)
             return
 
-        extend = self.TerminalManager.get_choice_with_autocomplete(
-            f"Existing {self.item_type}(s) with the same name found. Would you like to extend from one of them? ",
-            self.YES_NO,
-            validator=self.Validators.ChoiceValidator(self.YES_NO)
-        )
+        extend = self.TerminalManager.get_yes_no(f"Existing {self.item_type}(s) with the same name found. Would you like to extend from one of them?")
 
-        if extend == "Yes":
+        if extend:
             while True:
                 extending_item = self.TerminalManager.get_choice_with_autocomplete(
                     f"Choose the {self.item_type} you would like to extend: ",

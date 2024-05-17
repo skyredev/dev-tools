@@ -6,16 +6,22 @@ from DevTools.Sync.Sync_Command import SyncCommand
 from DevTools.Action.Action_Command import ActionCommand
 from DevTools.Controller.Controller_Command import ControllerCommand
 from DevTools.EntityPHP.Entity_PHP_Command import EntityPHPCommand
-from DevTools.Services.Service_Command import ServiceCommand
+from DevTools.Service.Service_Command import ServiceCommand
+from DevTools.Tool.Tool_Command import ToolCommand
+from DevTools.DynamicHandler.DynamicHandler_Command import DynamicHandlerCommand
+from DevTools.SetupHandler.SetupHandler_Command import SetupHandlerCommand
 
 COMMAND_DESCRIPTIONS = {
     "action": "Creates a new action",
     "button": "Creates a new button",
     "controller": "Creates a new controller",
+    "dynamicHandler": "Creates a new dynamic handler",
     "entityDefs": "Creates a new metadata entity",
     "entityPHP": "Creates a new PHP entity",
     "hook": "Creates a new hook",
     "service": "Creates a new service",
+    "setupHandler": "Creates a new setup handler",
+    "tool": "Creates a new tool",
     "sync": "Synchronizes with the instance",
     "help": "Displays help message",
     "exit": "Exit the script"
@@ -39,9 +45,12 @@ def main():
     entity_metadata_Command = EntityMetadataCommand()
     entity_php_Command = EntityPHPCommand()
     service_Command = ServiceCommand()
+    tool_Command = ToolCommand()
     sync_Command = SyncCommand()
     action_Command = ActionCommand()
     controller_Command = ControllerCommand()
+    dynamic_handler_Command = DynamicHandlerCommand()
+    setup_handler_Command = SetupHandlerCommand()
 
     while True:
         print("")
@@ -60,12 +69,18 @@ def main():
                 button_Command.run()
             case "controller":
                 controller_Command.run()
+            case "dynamicHandler":
+                dynamic_handler_Command.run()
             case "entity":
                 entity_metadata_Command.run()
             case "entityPHP":
                 entity_php_Command.run()
             case "service":
                 service_Command.run()
+            case "setupHandler":
+                setup_handler_Command.run()
+            case "tool":
+                tool_Command.run()
             case "hook":
                 hook_Command.run()
             case "help":

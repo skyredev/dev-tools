@@ -1,0 +1,6 @@
+{
+    "dynamicHandlerList": [
+        "__APPEND__",
+        "{ModuleNamePlaceholder}:handlers/{EntityNamePlaceholder}/{HandlerNamePlaceholder}-handler"
+    ]
+}

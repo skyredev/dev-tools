@@ -24,6 +24,7 @@ class BaseCommand:
         self.controllers_dir = os.path.join(self.current_dir, "src/backend/Controllers")
         self.php_entities_dir = os.path.join(self.current_dir, "src/backend/Entities")
         self.services_dir = os.path.join(self.current_dir, "src/backend/Services")
+        self.tools_dir = os.path.join(self.current_dir, "src/backend/Tools")
         self.api_actions_dir = os.path.join(self.current_dir, "src/backend/Api")
         self.mass_actions_dir = os.path.join(self.current_dir, "src/backend/MassAction")
         self.routes_path = os.path.join(self.current_dir, "src/backend/Resources/routes.json")
@@ -65,6 +66,9 @@ class BaseCommand:
 
         if self.command_name_without_extension == "Service_Command":
             self.services = self.get_cache_list("Services", self.services_dir, ".php")
+
+        if self.command_name_without_extension == "Tool_Command":
+            self.tools = self.get_cache_list("Tools", self.tools_dir, ".php")
 
     def get_module_suggestion(self):
         if os.path.isfile(self.package_json_dir):

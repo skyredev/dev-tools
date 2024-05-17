@@ -10,6 +10,9 @@ class PathManager:
     def get_service_path(self, service_name):
         return os.path.join(self.backend_dir, f"Services/{service_name}.php")
 
+    def get_tool_path(self, tool_name):
+        return os.path.join(self.backend_dir, f"Tools/{tool_name}.php")
+
     def get_handler_path(self, entity_name, button_name):
         return os.path.join(self.current_dir, f"src/client/src/handlers/{entity_name}/{button_name}-handler.js")
 

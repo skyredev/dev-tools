@@ -67,13 +67,9 @@ class ControllerCommand(BaseProcessor):
 
         self.FileManager.write_file(item_file_path, item_content)
 
-        add_actions = self.TerminalManager.get_choice_with_autocomplete(
-            "Would you like to add actions to the controller? ",
-            self.YES_NO,
-            validator=self.Validators.ChoiceValidator(self.YES_NO)
-        )
+        add_actions = self.TerminalManager.get_yes_no("Would you like to add actions to the controller?")
 
-        if add_actions == "Yes":
+        if add_actions:
             self.add_actions(item_file_path, item_content)
 
     def add_actions(self, controller_file_path, controller_content):
@@ -112,13 +108,8 @@ class ControllerCommand(BaseProcessor):
             if custom_route:
                 route = self.TerminalManager.get_user_input("Enter the route for the action",
                                                             self.Validators.empty_string_validator)
-                noAuth = self.TerminalManager.get_choice_with_autocomplete(
-                    "Does this action require authentication? ",
-                    self.YES_NO,
-                    validator=self.Validators.ChoiceValidator(self.YES_NO)
-                )
+                noAuth = self.TerminalManager.get_yes_no("Does this action require authentication?")
 
-                noAuth = noAuth == "Yes"
                 controller_name = controller_file_path.split("/")[-1].replace(".php", "")
 
                 self.append_route(method, route, controller_name, action, noAuth)

@@ -15,11 +15,6 @@ class ActionCommand(BaseCommand):
         "delete",
     ]
 
-    YES_NO = [
-        "Yes",
-        "No"
-    ]
-
     def run(self):
         module = self.get_module()
         entity = self.get_autocomplete_names(self.metadata_entities, "Enter the entity name: ")
@@ -41,15 +36,7 @@ class ActionCommand(BaseCommand):
         route = self.TerminalManager.get_user_input("Enter the route for the action",
                                                     self.Validators.empty_string_validator)
 
-        noAuth = self.TerminalManager.get_choice_with_autocomplete(
-            "Does this action require authentication? ",
-            self.YES_NO,
-            validator=self.Validators.ChoiceValidator(self.YES_NO)
-        )
-        if noAuth == "Yes":
-            noAuth = True
-        else:
-            noAuth = False
+        noAuth = self.TerminalManager.get_yes_no("Does this action require authentication?")
 
         populated_template = self.TemplateManager.set_template_values(
             self.FileManager.read_file(os.path.join(self.script_path, "Templates/" + "BaseAction" + ".php")),

@@ -51,6 +51,13 @@ class TerminalManager:
         user_input = prompt(prompt_text, completer=completer)
         return user_input
 
+    def get_yes_no(self, prompt_text):
+
+        if self.get_choice_with_autocomplete(f"{prompt_text} ", ['Yes', 'No'], send_choices=True) == 'Yes':
+            return True
+        else:
+            return False
+
     def get_choice_with_autocomplete(self, prompt_text, choices: list, send_choices=True, validator=None):
         if send_choices:
             output = ''
@@ -82,13 +89,14 @@ class TerminalManager:
         else:
             return ''
 
-    def get_converted_name(self, name):
+    def get_converted_name(self, name, noFunctionMessage=False):
         converted_name = re.sub(r'[^a-zA-Z0-9\s-]', '', name).strip().lower().replace(' ', '-')
         converted_name = re.sub(r'-+', '-', converted_name)
         functions_name = self.convert_to_camel_case(name, start_lower=False)
         print(f"Button name converted: {name} -> {converted_name}")
-        print(
-            f"Function names will be: init{functions_name}, action{functions_name}")
+        if not noFunctionMessage:
+            print(
+                f"Function names will be: init{functions_name}, action{functions_name}")
         return converted_name
 
     @staticmethod

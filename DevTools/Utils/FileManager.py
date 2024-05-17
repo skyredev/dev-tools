@@ -20,11 +20,6 @@ class FileManager:
         self.resources_dir = os.path.join(self.current_dir, 'src/backend/Resources')
         self.backend_dir = os.path.join(self.current_dir, 'src/backend')
 
-    YES_NO = [
-        "Yes",
-        "No"
-    ]
-
     @staticmethod
     def create_directory(directory):
         if not os.path.exists(directory):
@@ -126,7 +121,8 @@ class FileManager:
             return file_names
 
     def add_translations(self, entity_name, section_path, key, default_value):
-        default_translation_filepath = self.ensure_file_exists(self.PathManager.get_i18n_path(entity_name, self.default_language))
+        default_translation_filepath = self.ensure_file_exists(
+            self.PathManager.get_i18n_path(entity_name, self.default_language))
 
         other_languages = self.languages.copy()
         other_languages.remove(self.default_language)
