@@ -109,7 +109,6 @@ class SyncCommand(BaseCommand):
                         base_cache_path = '.'.join(segments).replace('/', '.')
                         relative_path = ''
 
-                # Финальный путь кэша
                 cache_folder = f"{cache_dir}/{base_cache_path}/{relative_path}"
                 final_cache_path = os.path.join(self.cache_dir, cache_folder, file_name + file_extension).replace('\\',
                                                                                                                   '/')
