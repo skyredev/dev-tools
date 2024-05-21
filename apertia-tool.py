@@ -10,14 +10,18 @@ from DevTools.Service.Service_Command import ServiceCommand
 from DevTools.Tool.Tool_Command import ToolCommand
 from DevTools.DynamicHandler.DynamicHandler_Command import DynamicHandlerCommand
 from DevTools.SetupHandler.SetupHandler_Command import SetupHandlerCommand
+from DevTools.CustomView.CustomView_Command import ViewCommand
+from DevTools.FieldViews.FieldView_Command import FieldViewCommand
 
 COMMAND_DESCRIPTIONS = {
     "action": "Creates a new action",
     "button": "Creates a new button",
     "controller": "Creates a new controller",
+    "customView": "Creates a new view",
     "dynamicHandler": "Creates a new dynamic handler",
     "entityDefs": "Creates a new metadata entity",
     "entityPHP": "Creates a new PHP entity",
+    "fieldView": "Creates a new field view",
     "hook": "Creates a new hook",
     "service": "Creates a new service",
     "setupHandler": "Creates a new setup handler",
@@ -46,6 +50,8 @@ def main():
     entity_php_Command = EntityPHPCommand()
     service_Command = ServiceCommand()
     tool_Command = ToolCommand()
+    fieldView_Command = FieldViewCommand()
+    customView_Command = ViewCommand()
     sync_Command = SyncCommand()
     action_Command = ActionCommand()
     controller_Command = ControllerCommand()
@@ -75,12 +81,16 @@ def main():
                 entity_metadata_Command.run()
             case "entityPHP":
                 entity_php_Command.run()
+            case "fieldView":
+                fieldView_Command.run()
             case "service":
                 service_Command.run()
             case "setupHandler":
                 setup_handler_Command.run()
             case "tool":
                 tool_Command.run()
+            case "customView":
+                customView_Command.run()
             case "hook":
                 hook_Command.run()
             case "help":

@@ -1,0 +1,5 @@
+{
+    "recordViews": {
+        "{ViewTypePlaceholder}": "{ModuleNamePlaceholder}:views/{EntityNamePlaceholder}/{ViewPathPlaceholder}"
+    }
+}

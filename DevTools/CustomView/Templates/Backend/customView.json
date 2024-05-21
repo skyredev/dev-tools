@@ -1,0 +1,5 @@
+{
+    "views": {
+        "{ViewTypePlaceholder}": "{ModuleNamePlaceholder}:views/{EntityNamePlaceholder}/{ViewPathPlaceholder}"
+    }
+}

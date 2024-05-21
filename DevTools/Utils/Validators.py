@@ -97,6 +97,12 @@ class Validators:
         raise Validators.ValidationError("Handler name can only contain letters, numbers, spaces, and hyphens.")
 
     @staticmethod
+    def view_name_validator(name):
+        if re.fullmatch(r'[a-zA-Z0-9\s-]+', name):
+            return name
+        raise Validators.ValidationError("View name can only contain letters, numbers, spaces, and hyphens.")
+
+    @staticmethod
     def entity_validator(name):
         if re.fullmatch(r'[a-zA-Z]+', name):
             return name
