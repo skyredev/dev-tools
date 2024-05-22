@@ -57,10 +57,10 @@ class FieldViewCommand(BaseCommand):
             local_entity_has_view = self.MetadataManager.get(local_entity_path, ["fields", field, "view"])
 
             if local_entity_has_view:
-                print(self.colorization("yellow", "This field already has a view."))
+                print(self.colorization("yellow", f"This field already has a view ({local_entity_has_view} - in local entityDefs)"))
                 actions = ["Overwrite Field View (Create new view)", "Choose a different field", "Cancel"]
                 action = self.TerminalManager.get_choice_with_autocomplete(
-                    "Choose an action: ",
+                    "What do you want to do? ",
                     actions,
                     validator=self.Validators.ChoiceValidator(actions)
                 )
@@ -72,8 +72,6 @@ class FieldViewCommand(BaseCommand):
                     delete_old = self.TerminalManager.get_yes_no("Do you want to delete the old view?")
                     if delete_old:
                         os.remove(os.path.join(self.current_dir, f"src/client/src/views/{entity_name}/fields", local_entity_has_view.split("/")[-1] + ".js"))
-                    else:
-                        break
 
             file_name = self.TerminalManager.get_converted_name(field_type, "Field View", noFunctionMessage=True)
 
