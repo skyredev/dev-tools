@@ -61,7 +61,7 @@ class ButtonCommand(BaseCommand):
                 return
 
         name = self.TerminalManager.get_user_input("Enter the button name", self.Validators.button_name_validator)
-        converted_name = self.TerminalManager.get_converted_name(name)
+        converted_name = self.TerminalManager.get_converted_name(name, "Button")
 
         while self.file_exists_local_folder(f"{converted_name}-handler",
                                             os.path.join(self.current_dir, f"src/client/src/handlers/{entity}"),
@@ -69,7 +69,7 @@ class ButtonCommand(BaseCommand):
             print(self.colorization("yellow",
                                     "Button with the same name already exists locally. Please type a different name."))
             name = self.TerminalManager.get_user_input("Enter the button name", self.Validators.button_name_validator)
-            converted_name = self.TerminalManager.get_converted_name(name)
+            converted_name = self.TerminalManager.get_converted_name(name, name_type="Button")
 
         label = self.TerminalManager.get_user_input("Enter the button label", default=name)
 

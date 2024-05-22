@@ -50,7 +50,7 @@ class ViewCommand(BaseCommand):
 
         name = self.TerminalManager.get_user_input("Enter the view name",
                                                    self.Validators.view_name_validator)
-        converted_name = self.TerminalManager.get_converted_name(name)
+        converted_name = self.TerminalManager.get_converted_name(name, "View")
 
         while self.file_exists_local_folder(f"{converted_name}",
                                             os.path.join(self.current_dir, f"src/client/src/views/{entity}"),
@@ -59,7 +59,7 @@ class ViewCommand(BaseCommand):
                                     "View with the same name (after conversion) already exists locally. Please type a different name."))
             name = self.TerminalManager.get_user_input("Enter the view name",
                                                        self.Validators.view_name_validator)
-            converted_name = self.TerminalManager.get_converted_name(name)
+            converted_name = self.TerminalManager.get_converted_name(name, "View")
 
         tpl_template = self.FileManager.read_file(
             os.path.join(self.script_path, "Templates/Frontend/" + "customView.tpl"))

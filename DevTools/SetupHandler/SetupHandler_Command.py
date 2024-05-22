@@ -34,7 +34,7 @@ class SetupHandlerCommand(BaseCommand):
 
         name = self.TerminalManager.get_user_input("Enter the setup handler name",
                                                    self.Validators.handler_name_validator)
-        converted_name = self.TerminalManager.get_converted_name(name, noFunctionMessage=True)
+        converted_name = self.TerminalManager.get_converted_name(name, "Setup Handler", noFunctionMessage=True)
 
         while self.file_exists_local_folder(f"{converted_name}-handler",
                                             os.path.join(self.current_dir, f"src/client/src/handlers/{entity}"),
@@ -43,7 +43,7 @@ class SetupHandlerCommand(BaseCommand):
                                     "Handler with the same name (after conversion) already exists locally. Please type a different name."))
             name = self.TerminalManager.get_user_input("Enter the setup handler name",
                                                        self.Validators.handler_name_validator)
-            converted_name = self.TerminalManager.get_converted_name(name, noFunctionMessage=True)
+            converted_name = self.TerminalManager.get_converted_name(name, "Setup Handler", noFunctionMessage=True)
 
         json_populated_template = self.TemplateManager.set_template_values(
             self.FileManager.read_file(

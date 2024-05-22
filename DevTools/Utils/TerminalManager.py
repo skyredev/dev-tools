@@ -89,11 +89,11 @@ class TerminalManager:
         else:
             return ''
 
-    def get_converted_name(self, name, noFunctionMessage=False):
+    def get_converted_name(self, name, name_type, noFunctionMessage=False):
         converted_name = re.sub(r'[^a-zA-Z0-9\s-]', '', name).strip().lower().replace(' ', '-')
         converted_name = re.sub(r'-+', '-', converted_name)
         functions_name = self.convert_to_camel_case(name, start_lower=False)
-        print(f"Button name converted: {name} -> {converted_name}")
+        print(f"{name_type} name converted: {name} -> {converted_name}")
         if not noFunctionMessage:
             print(
                 f"Function names will be: init{functions_name}, action{functions_name}")
