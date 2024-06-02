@@ -16,7 +16,7 @@ class PathManager:
     def get_view_path(self, entity_name, view_name, view):
         return os.path.join(self.current_dir, f"src/client/src/views/{entity_name}/{view}/{view_name}.js")
 
-    def get_tpl_path(self, entity_name, view_name, view):
+    def get_tpl_path(self, entity_name, view, view_name):
         return os.path.join(self.current_dir, f"src/client/res/templates/{entity_name}/{view}/{view_name}.tpl")
 
     def get_handler_path(self, entity_name, button_name):

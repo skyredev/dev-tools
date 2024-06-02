@@ -6,6 +6,7 @@ define('{ModuleNamePlaceholder}:views/{EntityNamePlaceholder}/{ViewPathPlacehold
         {MiddleViewPlaceholder}
         {SideViewPlaceholder}
         {BottomViewPlaceholder}
+
         setup: function() {
             Dep.prototype.setup.call(this);
 
